@@ -61,11 +61,11 @@ jobs:
       - name: File Checksum ✔️
         id: hash
         run: |
-          file = "${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle"
-          md5_hash=$(md5sum "$file" | cut -d ' ' -f 1)
-          sha256_hash=$(sha256sum "$file" | cut -d ' ' -f 1)
-          $md5_hash = $md5_hash.ToLower()
-          $sha256_hash = $sha256_hash.ToLower()
+          filedir="${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle"
+          md5_hash=$(md5sum "$filedir" | cut -d ' ' -f 1)
+          sha256_hash=$(sha256sum "$filedir" | cut -d ' ' -f 1)
+          $md5_hash=$md5_hash.ToLower()
+          $sha256_hash=$sha256_hash.ToLower()
           echo "MD5=$md5_hash" >> $GITHUB_OUTPUT
           echo "SHA256=$sha256_hash" >> $GITHUB_OUTPUT
           
