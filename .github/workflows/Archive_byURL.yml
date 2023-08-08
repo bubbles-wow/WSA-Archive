@@ -43,7 +43,7 @@ jobs:
             result="Version=${{ inputs.Version }}"
             python3 Archive_byURL.py ${{ inputs.URL }} ${{ inputs.Version }}
           else
-            result=$(head -n 1 UpdateID.cfg | sed 's/[[:space:]]*$//')
+            result=$(head -n 1 UpdateInfo.cfg | sed 's/[[:space:]]*$//')
             python3 Archive_byURL.py
           fi
           echo "$result" >> $GITHUB_OUTPUT
