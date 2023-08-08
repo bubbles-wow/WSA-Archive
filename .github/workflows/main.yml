@@ -64,10 +64,10 @@ jobs:
           filedir="${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle"
           md5_hash=$(md5sum "$filedir" | cut -d ' ' -f 1)
           sha256_hash=$(sha256sum "$filedir" | cut -d ' ' -f 1)
-          $md5_hash=$md5_hash.ToLower()
-          $sha256_hash=$sha256_hash.ToLower()
-          echo "MD5=$md5_hash" >> $GITHUB_OUTPUT
-          echo "SHA256=$sha256_hash" >> $GITHUB_OUTPUT
+          md5_hash_lower=$(echo "$md5_hash" | tr '[:upper:]' '[:lower:]')
+          sha256_hash_lower=$(echo "$sha256_hash" | tr '[:upper:]' '[:lower:]')
+          echo "MD5=$md5_hash_lower" >> $GITHUB_OUTPUT
+          echo "SHA256=$sha256_hash_lower" >> $GITHUB_OUTPUT
           
 
       - name: Update build to release 🤌
