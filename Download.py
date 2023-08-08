@@ -46,9 +46,9 @@ try:
 except:
     print("Notice: You haven't logged in yet. Some UpdateID may not be available.")
     time.sleep(1)
-if Path.exists(dir / "UpdateID.cfg"):
+if Path.exists(dir + "/UpdateID.cfg"):
     print("Found UpdateID.cfg!")
-    with open(dir / "UpdateID.cfg", "r") as f:
+    with open(dir + "/UpdateID.cfg", "r") as f:
         text = f.read()
         Version = Prop(text).get("Version")
         UpdateID = Prop(text).get("UpdateID")
@@ -65,7 +65,7 @@ else:
         exit()
 Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
 print(Filename)
-with open(dir / "FE3FileUrl.xml", "r") as f:
+with open(dir + "/FE3FileUrl.xml", "r") as f:
     FE3_file_content = f.read()
     f.close()
 try:
@@ -88,10 +88,10 @@ for l in doc.getElementsByTagName("FileLocation"):
     if url.split("/")[2] == "tlu.dl.delivery.mp.microsoft.com":
         print(url)
         break
-with open(dir / "download/" + Filename, "wb") as f, requests.get(url, stream=True) as res:
+with open(dir + "/download/" + Filename, "wb") as f, requests.get(url, stream=True) as res:
     for chunk in res.iter_content(chunk_size=4*1024):
         if chunk:
             f.write(chunk)
             f.flush()
-if Path.exists(dir / "download/" + Filename):
+if Path.exists(dir + "/download/" + Filename):
     print("Done!")
