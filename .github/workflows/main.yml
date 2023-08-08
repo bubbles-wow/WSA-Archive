@@ -48,6 +48,7 @@ jobs:
           ls -R
           head -n 1 UpdateID.cfg >> $GITHUB_OUTPUT
           python3 Download.py
+          ls -R
       
       - name: upload result
         id: result
