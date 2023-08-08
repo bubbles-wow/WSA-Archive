@@ -45,11 +45,9 @@ jobs:
         id: download
         run: |
           cd ${{ github.workspace }}
-          ls -R
           result=$(head -n 1 UpdateID.cfg | sed 's/[[:space:]]*$//')
           echo "$result" >> $GITHUB_OUTPUT
           python3 Download.py
-          ls -R
       
       - name: upload result
         id: result
@@ -64,6 +62,8 @@ jobs:
           filedir="${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle"
           md5_hash=$(md5sum "$filedir" | cut -d ' ' -f 1)
           sha256_hash=$(sha256sum "$filedir" | cut -d ' ' -f 1)
+          echo md5_hash
+          echo sha256_hash
           md5_hash_lower=$(echo "$md5_hash" | tr '[:upper:]' '[:lower:]')
           sha256_hash_lower=$(echo "$sha256_hash" | tr '[:upper:]' '[:lower:]')
           echo "MD5=$md5_hash_lower" >> $GITHUB_OUTPUT
