@@ -35,8 +35,10 @@ ReleaseType_list = ["retail", "RP", "WIS", "WIF"]
 RevisionNumber = 1
 session = Session()
 session.verify = False
-url = sys.argv[1]
-Version = sys.argv[2]
+if sys.argv[1]:
+    url = sys.argv[1]
+if sys.argv[2]:
+    Version = sys.argv[2]
 try:
     response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/MS-Account-Token/main/token.cfg")
     text = response.read().decode("utf-8")
