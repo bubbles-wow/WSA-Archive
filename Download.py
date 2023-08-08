@@ -25,7 +25,8 @@ class Prop(OrderedDict):
         return '\n'.join(f'{item}={self[item]}' for item in self)
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-dir = Path.cwd().parent
+#dir = Path.cwd().parent
+dir = "/home/runner/work/WSA-Archive/WSA-Archive/./WSA-Archive"
 user_token = ""
 ReleaseType = "retail"
 UpdateID = "00000000-0000-0000-0000-000000000000"
