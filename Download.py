@@ -26,7 +26,8 @@ class Prop(OrderedDict):
         return '\n'.join(f'{item}={self[item]}' for item in self)
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-dir = Path.cwd()
+#dir = Path.cwd()
+dir = os.path.dirname(os.path.realpath(__file__))
 user_token = ""
 ReleaseType = "retail"
 UpdateID = "00000000-0000-0000-0000-000000000000"
@@ -81,12 +82,14 @@ for l in doc.getElementsByTagName("FileLocation"):
         print(url)
         break
 
-Path.mkdir(dir / "output", exist_ok=True)
+#Path.mkdir(dir / "output", exist_ok=True)
+os.makedirs(dir + "/output", exist_ok=True)
+dir = dir + "/output"
 response = requests.get(url)
-with open(dir / "output/" + Filename, "wb") as f:
+with open(dir + Filename, "wb") as f:
     f.write(response.content)
     f.close()
-if Path(dir / "output/" + Filename).exists():
+if Path(dir + Filename).exists():
     print("Successfully downloaded!")
 
 # 创建 GitHub Release
