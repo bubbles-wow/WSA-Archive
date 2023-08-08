@@ -50,6 +50,13 @@ jobs:
           echo "$result" >> $GITHUB_OUTPUT
           python3 Download.py
           ls -R
+          file = ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          md5_hash=$(md5sum "$file" | cut -d ' ' -f 1)
+          sha256_hash=$(sha256sum "$file" | cut -d ' ' -f 1)
+          $md5_hash = $md5_hash.ToLower()
+          $sha256_hash = $sha256_hash.ToLower()
+          echo "MD5=$md5_hash" >> $GITHUB_OUTPUT
+          echo "SHA256=$sha256_hash" >> $GITHUB_OUTPUT
       
       - name: upload result
         id: result
@@ -61,13 +68,7 @@ jobs:
       - name: File Checksum ✔️
         id: hash
         run: |
-          file = ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
-          md5_hash=$(md5sum "$file" | cut -d ' ' -f 1)
-          sha256_hash=$(sha256sum "$file" | cut -d ' ' -f 1)
-          $md5_hash = $md5_hash.ToLower()
-          $sha256_hash = $sha256_hash.ToLower()
-          echo "MD5=$md5_hash" >> $GITHUB_OUTPUT
-          echo "SHA256=$sha256_hash" >> $GITHUB_OUTPUT
+          
 
       - name: Update build to release 🤌
         uses: softprops/action-gh-release@v0.1.15
@@ -78,6 +79,6 @@ jobs:
           tag_name: ${{ steps.download.outputs.Version }}
           body: |
             File name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
-            MD5: ${{ steps.hash.outputs.MD5 }}
-            SHA256: ${{ steps.hash.outputs.SHA256 }}
+            MD5: ${{ steps.download.outputs.MD5 }}
+            SHA256: ${{ steps.download.outputs.SHA256 }}
           token: ${{ secrets.GITHUB_TOKEN }}
