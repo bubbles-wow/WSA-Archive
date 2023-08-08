@@ -126,8 +126,8 @@ jobs:
                   print(url)
                   break
           file = requests.get(url, stream=True)
-          open(${{ github.workspace }} + "/" + Filename, "wb").write(file.content)
-          if Path.exists(${{ github.workspace }} + "/" + Filename):
+          open("${{ github.workspace }}/output/" + Filename, "wb").write(file.content)
+          if Path.exists("${{ github.workspace }}/output/" + Filename):
               print("Done!")
       
       - name: upload result
@@ -135,4 +135,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: my-artifact
-          path: ${{ github.workspace }}/
+          path: ${{ github.workspace }}/output
