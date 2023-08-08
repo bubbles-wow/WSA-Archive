@@ -35,21 +35,11 @@ ReleaseType_list = ["retail", "RP", "WIS", "WIF"]
 RevisionNumber = 1
 session = Session()
 session.verify = False
-if sys.argv[1]:
+if len(sys.argv) > 1:
     url = sys.argv[1]
-if sys.argv[2]:
+elif len(sys.argv) > 2:
     Version = sys.argv[2]
-try:
-    response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/MS-Account-Token/main/token.cfg")
-    text = response.read().decode("utf-8")
-    user_token = Prop(text).get("user_code")
-    updatetime = Prop(text).get("update_time")
-    print("Successfully get user token from server!")
-    print(f"Last update time: {updatetime}\n")
-except:
-    print("Notice: You haven't logged in yet. Some UpdateID may not be available.")
-    time.sleep(1)
-if url == "":
+else:
     try:
         response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/WSA-Archive/main/UpdateInfo.cfg")
         text = response.read().decode("utf-8")
@@ -59,6 +49,9 @@ if url == "":
     except:
         print("Cannot get URL from server! Please check your network and try again.")
         exit()
+if url == "":
+    print("No availavle URL!")
+    exit()
 Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
 print(f"File name: {Filename}")
 print(f"Download URL: {url}")
