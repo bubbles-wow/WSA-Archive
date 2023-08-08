@@ -44,7 +44,8 @@ jobs:
       - name: Download
         id: download
         shell: python
-        run: 
+        run: |
+          cd ${{ github.workspace }}
           python3 Download.py
       
       - name: upload result
