@@ -86,10 +86,10 @@ for l in doc.getElementsByTagName("FileLocation"):
 os.makedirs(dir + "/output", exist_ok=True)
 dir = dir + "/output"
 response = requests.get(url)
-with open(dir + Filename, "wb") as f:
+with open(dir + "/" + Filename, "wb") as f:
     f.write(response.content)
     f.close()
-if Path(dir + Filename).exists():
+if Path(dir + "/" + Filename).exists():
     print("Successfully downloaded!")
 
 # 创建 GitHub Release
