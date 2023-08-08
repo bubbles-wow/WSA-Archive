@@ -43,10 +43,8 @@ jobs:
 
       - name: Download
         id: download
-        shell: python
         run: |
-          git clone "https://github.com/bubbles-wow/WSA-Archive.git"
-          cd ${{ github.workspace }}\WSA-Archive\.\WSA-Archive
+          cd ${{ github.workspace }}
           ls -R
           python3 Download.py
       
