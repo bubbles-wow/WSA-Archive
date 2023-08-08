@@ -39,12 +39,12 @@ jobs:
         id: download
         run: |
           cd ${{ github.workspace }}
-          if [ -z "${{ inputs.Version }}" ] || [ -z "${{ inputs.URL }}" ]; then
-            result=$(head -n 1 UpdateID.cfg | sed 's/[[:space:]]*$//')
-            python3 Archive_byURL.py
-          else
+          if [ -n "${{ inputs.Version }}" ] && [ -n "${{ inputs.URL }}" ]; then
             result="Version=${{ inputs.Version }}"
             python3 Archive_byURL.py ${{ inputs.URL }} ${{ inputs.Version }}
+          else
+            result=$(head -n 1 UpdateID.cfg | sed 's/[[:space:]]*$//')
+            python3 Archive_byURL.py
           fi
           echo "$result" >> $GITHUB_OUTPUT
       
