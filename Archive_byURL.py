@@ -31,6 +31,7 @@ user_token = ""
 ReleaseType = "retail"
 UpdateID = "00000000-0000-0000-0000-000000000000"
 Version = "0.0.0.0"
+url = ""
 ReleaseType_list = ["retail", "RP", "WIS", "WIF"]
 RevisionNumber = 1
 session = Session()
