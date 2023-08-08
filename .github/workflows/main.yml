@@ -81,4 +81,4 @@ jobs:
             File name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
             MD5: ${{ steps.download.outputs.MD5 }}
             SHA256: ${{ steps.download.outputs.SHA256 }}
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.PAT }}
