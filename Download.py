@@ -82,9 +82,11 @@ for l in doc.getElementsByTagName("FileLocation"):
         break
 
 response = requests.get(url)
-with open(Filename, "wb") as f:
+with open(dir / "output/" + Filename, "wb") as f:
     f.write(response.content)
     f.close()
+if Path(dir / "output/" + Filename).exists():
+    print("Successfully downloaded!")
 
 # 创建 GitHub Release
 release_title = Version
@@ -92,7 +94,7 @@ release_body = Filename
 
 github_token = os.environ.get("GITHUB_TOKEN")
 release_api_url = "https://api.github.com/repos/bubbles-wow/WSA-Archive/releases"
-
+print(github_token)
 headers = {
     "Authorization": f"Bearer {github_token}",
     "Accept": "application/vnd.github.v3+json"
