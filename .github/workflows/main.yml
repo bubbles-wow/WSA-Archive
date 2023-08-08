@@ -131,10 +131,21 @@ jobs:
                       f.flush()
           if Path.exists(dir / Filename):
               print("Done!")
-        
+
+      - name: Prepare release tag 🏷️
+        id: pre
+        shell: bash
+        run: |
+          path=$1
+          files=$(ls $path)
+          for filename in $files
+          do
+            echo "filename=($filename)" >> $GITHUB_OUTPUT
+          done
+      
       - name: Upload to release
         uses: JasonEtco/upload-to-release@master
         with:
-          args: hello-word-${{ matrix.os }}.tar.gz application/octet-stream
+          args: ${{ steps.date.outputs.filename }} application/octet-stream
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: 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
