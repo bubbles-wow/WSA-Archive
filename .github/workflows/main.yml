@@ -37,7 +37,7 @@ jobs:
           check-latest: true
           python-version: '3.x'
           cache: 'pip'
-          cache-dependency-path: scripts/
+          cache-dependency-path: /
 
       - name: Download
         id: Download
