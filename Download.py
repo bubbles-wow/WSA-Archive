@@ -81,6 +81,7 @@ for l in doc.getElementsByTagName("FileLocation"):
         print(url)
         break
 
+Path.mkdir(dir / "output", exist_ok=True)
 response = requests.get(url)
 with open(dir / "output/" + Filename, "wb") as f:
     f.write(response.content)
