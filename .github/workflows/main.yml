@@ -30,8 +30,6 @@ jobs:
         with:
           check-latest: true
           python-version: '3.x'
-          cache: 'pip'
-          cache-dependency-path: /
 
       - name: Setup Python3 Virtual Enviroment 🐍
         working-directory: scripts
@@ -57,6 +55,7 @@ jobs:
         id: Download
         run: |
           git clone https://github.com/bubbles-wow/WSA-Archive.git
+          pip install requests
           python3 ./WSA-Archive/Download.py
 
       - name: Update build to release 🤌
