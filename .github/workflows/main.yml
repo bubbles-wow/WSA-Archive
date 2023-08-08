@@ -98,9 +98,12 @@ jobs:
               exit()
           Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
           print(Filename)
-          with open(dir / "WSA-Archive/./WSA-Archive/FE3FileUrl.xml", "r") as f:
-              FE3_file_content = f.read()
-              f.close()
+          try:
+              response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/WSA-Archive/main/FE3FileUrl.xml")
+              FE3_file_content = response.read().decode("utf-8")
+          except:
+              print("Cannot get UpdateID from server! Please check your network and try again.")
+              exit()
           try:
               out = session.post(
                   'https://fe3.delivery.mp.microsoft.com/ClientWebService/client.asmx/secured',
@@ -128,3 +131,10 @@ jobs:
                       f.flush()
           if Path.exists(dir / Filename):
               print("Done!")
+        
+      - name: Upload to release
+        uses: JasonEtco/upload-to-release@master
+        with:
+          args: hello-word-${{ matrix.os }}.tar.gz application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
