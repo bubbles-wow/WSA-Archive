@@ -126,7 +126,7 @@ jobs:
                   print(url)
                   break
           file = requests.get(url, stream=True)
-          open("${{ github.workspace }}/output/" + Filename, "wb").write(file.content)
+          open("${{ github.workspace }}/output/" + Filename, "wb+").write(file.content)
           if Path.exists("${{ github.workspace }}/output/" + Filename):
               print("Done!")
       
