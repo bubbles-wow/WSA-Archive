@@ -75,7 +75,7 @@ jobs:
           files: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
           fail_on_unmatched_files: true
           append_body: true
-          tag_name: ${{ inputs.Version }}
+          tag_name: ${{ steps.download.outputs.Version }}
           body: |
               File name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
               MD5: ${{ steps.hash.outputs.MD5 }}
