@@ -46,6 +46,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           ls -R
+          head -n 1 UpdateID.cfg >> $GITHUB_OUTPUT
           python3 Download.py
       
       - name: upload result
@@ -53,4 +54,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: my-artifact
-          path: ${{ github.workspace }}/output
+          path: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle"
