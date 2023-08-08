@@ -57,11 +57,12 @@ else:
         text = response.read().decode("utf-8")
         Version = Prop(text).get("Version")
         UpdateID = Prop(text).get("UpdateID")
-        print(f"Version: {Version}\n")
+        #print(f"Version: {Version}\n")
     except:
-        print("Cannot get UpdateID from server! Please check your network and try again.")
+        #print("Cannot get UpdateID from server! Please check your network and try again.")
         exit()
-Filename = dir / "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
+Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
+print(Filename)
 with open(dir / "FE3FileUrl.xml", "r") as f:
     FE3_file_content = f.read()
     f.close()
@@ -72,19 +73,20 @@ try:
         headers={'Content-Type': 'application/soap+xml; charset=utf-8'}
     )
 except:
-    print(f"\rNetwork Error! Please check your network and try again.",end="")
+    #print(f"\rNetwork Error! Please check your network and try again.",end="")
     time.sleep(1)
     exit()
 doc = minidom.parseString(out.text)
 if len(out.text) < 1500:
-    print("Not found!")
+    #print("Not found!")
     exit()
 url = ""
 for l in doc.getElementsByTagName("FileLocation"):
     url = l.getElementsByTagName("Url")[0].firstChild.nodeValue
     if url.split("/")[2] == "tlu.dl.delivery.mp.microsoft.com":
-        print(url)
-with open(Filename, "wb") as f, requests.get(url, stream=True) as res:
+        #print(url)
+        break
+with open(dir / Filename, "wb") as f, requests.get(url, stream=True) as res:
     for chunk in res.iter_content(chunk_size=4*1024):
         if chunk:
             f.write(chunk)
