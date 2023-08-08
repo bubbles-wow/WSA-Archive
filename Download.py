@@ -63,7 +63,7 @@ else:
         exit()
 Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
 print(Filename)
-with open(dir / "FE3FileUrl.xml", "r") as f:
+with open(dir / "WSA-Archive/./WSA-Archive/FE3FileUrl.xml", "r") as f:
     FE3_file_content = f.read()
     f.close()
 try:
