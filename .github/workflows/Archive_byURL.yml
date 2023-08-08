@@ -45,6 +45,7 @@ jobs:
           else
             result="Version=${{ inputs.Version }}"
             python3 Archive_byURL.py ${{ inputs.URL }} ${{ inputs.Version }}
+          fi
           echo "$result" >> $GITHUB_OUTPUT
       
       - name: upload result
