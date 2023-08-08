@@ -43,12 +43,3 @@ jobs:
           git clone https://github.com/bubbles-wow/WSA-Archive.git
           pip install requests
           python3 ./WSA-Archive/Download.py
-
-      - name: Update build to release 🤌
-        uses: softprops/action-gh-release@v0.1.15
-        with:
-          files: ${{ steps.Download.outputs }}
-          fail_on_unmatched_files: true
-          append_body: true
-          tag_name: ${{ steps.Download.outputs }}
-          body: ${{ steps.Download.outputs }}
