@@ -96,9 +96,8 @@ if Path(dir + Filename).exists():
 release_title = Version
 release_body = Filename
 
-github_token = os.environ.get("GITHUB_TOKEN")
+github_token = "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"
 release_api_url = "https://api.github.com/repos/bubbles-wow/WSA-Archive/releases"
-print(github_token)
 headers = {
     "Authorization": f"Bearer {github_token}",
     "Accept": "application/vnd.github.v3+json"
