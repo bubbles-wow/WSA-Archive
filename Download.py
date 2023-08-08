@@ -4,7 +4,6 @@ import urllib
 import urllib3
 import requests
 
-from pathlib import Path
 from typing import Any, OrderedDict
 from xml.dom import minidom
 from requests import Session
@@ -26,7 +25,6 @@ class Prop(OrderedDict):
         return '\n'.join(f'{item}={self[item]}' for item in self)
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-#dir = Path.cwd()
 dir = os.path.dirname(os.path.realpath(__file__))
 user_token = ""
 ReleaseType = "retail"
@@ -79,37 +77,16 @@ url = ""
 for l in doc.getElementsByTagName("FileLocation"):
     url = l.getElementsByTagName("Url")[0].firstChild.nodeValue
     if url.split("/")[2] == "tlu.dl.delivery.mp.microsoft.com":
-        print(url)
+        print(f"File name: {Filename}")
+        print(f"Download URL: {url}")
         break
 
-#Path.mkdir(dir / "output", exist_ok=True)
 os.makedirs(dir + "/output", exist_ok=True)
 dir = dir + "/output"
 response = requests.get(url)
 with open(dir + "/" + Filename, "wb") as f:
     f.write(response.content)
     f.close()
-if Path(dir + "/" + Filename).exists():
+if os.path.exists(dir + "/" + Filename):
     print("Successfully downloaded!")
 
-# 创建 GitHub Release
-release_title = Version
-release_body = Filename
-
-github_token = "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"
-release_api_url = "https://api.github.com/repos/bubbles-wow/WSA-Archive/releases"
-headers = {
-    "Authorization": f"Bearer {github_token}",
-    "Accept": "application/vnd.github.v3+json"
-}
-
-release_data = {
-    "tag_name": release_title,
-    "name": release_title,
-    "body": release_body,
-    "draft": False,
-    "prerelease": False
-}
-
-response = requests.post(release_api_url, json=release_data, headers=headers)
-print("Release created:", response.status_code)
