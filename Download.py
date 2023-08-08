@@ -25,7 +25,7 @@ class Prop(OrderedDict):
         return '\n'.join(f'{item}={self[item]}' for item in self)
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-dir = Path.cwd().parent / "WSA-Archive/./WSA-Archive"
+dir = Path.cwd().parent
 user_token = ""
 ReleaseType = "retail"
 UpdateID = "00000000-0000-0000-0000-000000000000"
@@ -46,6 +46,7 @@ except:
     print("Notice: You haven't logged in yet. Some UpdateID may not be available.")
     time.sleep(1)
 if Path.exists(dir / "UpdateID.cfg"):
+    print("Found UpdateID.cfg!")
     with open(dir / "UpdateID.cfg", "r") as f:
         text = f.read()
         Version = Prop(text).get("Version")
@@ -86,10 +87,10 @@ for l in doc.getElementsByTagName("FileLocation"):
     if url.split("/")[2] == "tlu.dl.delivery.mp.microsoft.com":
         print(url)
         break
-with open(dir / "download" / Filename, "wb") as f, requests.get(url, stream=True) as res:
+with open(dir / "download/" + Filename, "wb") as f, requests.get(url, stream=True) as res:
     for chunk in res.iter_content(chunk_size=4*1024):
         if chunk:
             f.write(chunk)
             f.flush()
-if Path.exists(dir / "download" / Filename):
+if Path.exists(dir / "download/" + Filename):
     print("Done!")
