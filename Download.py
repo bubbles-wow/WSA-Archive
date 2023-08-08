@@ -1,3 +1,4 @@
+import os
 import time
 import urllib
 import urllib3
@@ -45,27 +46,26 @@ try:
 except:
     print("Notice: You haven't logged in yet. Some UpdateID may not be available.")
     time.sleep(1)
-if Path.exists(dir / "WSA-Archive/./WSA-Archive/UpdateID.cfg"):
-    with open(dir / "WSA-Archive/./WSA-Archive/UpdateID.cfg", "r") as f:
-        text = f.read()
-        Version = Prop(text).get("Version")
-        UpdateID = Prop(text).get("UpdateID")
-        f.close()
-else: 
-    try:
-        response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/WSA-Archive/main/UpdateID.cfg")
-        text = response.read().decode("utf-8")
-        Version = Prop(text).get("Version")
-        UpdateID = Prop(text).get("UpdateID")
-        print(f"Version: {Version}\n")
-    except:
-        print("Cannot get UpdateID from server! Please check your network and try again.")
-        exit()
+try:
+    response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/WSA-Archive/main/UpdateID.cfg")
+    text = response.read().decode("utf-8")
+    Version = Prop(text).get("Version")
+    UpdateID = Prop(text).get("UpdateID")
+    print(f"Version: {Version}\n")
+except:
+    print("Cannot get UpdateID from server! Please check your network and try again.")
+    exit()
 Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
 print(Filename)
 with open(dir / "WSA-Archive/./WSA-Archive/FE3FileUrl.xml", "r") as f:
     FE3_file_content = f.read()
     f.close()
+try:
+    response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/WSA-Archive/main/UpdateID.cfg")
+    text = response.read().decode("utf-8")
+except:
+    print("Cannot get sample from server! Please check your network and try again.")
+    exit()
 try:
     out = session.post(
         'https://fe3.delivery.mp.microsoft.com/ClientWebService/client.asmx/secured',
@@ -86,10 +86,31 @@ for l in doc.getElementsByTagName("FileLocation"):
     if url.split("/")[2] == "tlu.dl.delivery.mp.microsoft.com":
         print(url)
         break
-with open(dir / "download/" + Filename, "wb") as f, requests.get(url, stream=True) as res:
-    for chunk in res.iter_content(chunk_size=4*1024):
-        if chunk:
-            f.write(chunk)
-            f.flush()
-if Path.exists(dir / "download/" + Filename):
-    print("Done!")
+
+response = requests.get(url)
+with open(Filename, "wb") as f:
+    f.write(response.content)
+    f.close()
+
+# 创建 GitHub Release
+release_title = Version
+release_body = Filename
+
+github_token = os.environ.get("GITHUB_TOKEN")
+release_api_url = "https://api.github.com/repos/bubbles-wow/WSA-Archive/releases"
+
+headers = {
+    "Authorization": f"Bearer {github_token}",
+    "Accept": "application/vnd.github.v3+json"
+}
+
+release_data = {
+    "tag_name": release_title,
+    "name": release_title,
+    "body": release_body,
+    "draft": False,
+    "prerelease": False
+}
+
+response = requests.post(release_api_url, json=release_data, headers=headers)
+print("Release created:", response.status_code)
