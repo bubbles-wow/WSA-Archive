@@ -46,7 +46,8 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           ls -R
-          head -n 1 UpdateID.cfg >> $GITHUB_OUTPUT
+          result=$(head -n 1 UpdateID.cfg | sed 's/[[:space:]]*$//')
+          echo "$result" >> $GITHUB_OUTPUT
           python3 Download.py
           ls -R
       
