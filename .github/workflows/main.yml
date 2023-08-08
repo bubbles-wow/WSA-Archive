@@ -55,5 +55,22 @@ jobs:
         id: result
         uses: actions/upload-artifact@v1
         with:
-          name: my-artifact
+          name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
           path: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          
+      - name: File Checksum ✔️
+        id: checkhash
+        run: |
+          $hash = Get-FileHash ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle | Select-Object -ExpandProperty Hash
+          $hash = $hash.ToLower()
+          ("hash=" + $hash) >> $env:GITHUB_OUTPUT
+
+      - name: Update build to release 🤌
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          fail_on_unmatched_files: true
+          append_body: true
+          tag_name: ${{ steps.download.outputs.Version }}
+          body: ${{ steps.checkhash.outputs.hash }}  MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          token: ${{ secrets.GITHUB_TOKEN }}
