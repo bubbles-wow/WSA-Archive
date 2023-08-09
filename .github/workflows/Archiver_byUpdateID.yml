@@ -36,10 +36,10 @@ jobs:
           cd ${{ github.workspace }}
           if [ -n "${{ inputs.Version }}" ] && [ -n "${{ inputs.UpdateID }}" ]; then
             result="Version=${{ inputs.Version }}"
-            python3 Archive_byURL.py ${{ inputs.UpdateID }} ${{ inputs.Version }}
+            python3 Archive_byUpdateID.py ${{ inputs.UpdateID }} ${{ inputs.Version }}
           else
             result=$(head -n 1 UpdateInfo.cfg | sed 's/[[:space:]]*$//')
-            python3 Archive_byURL.py
+            python3 Archive_byUpdateID.py
           fi
           echo "$result" >> $GITHUB_OUTPUT
       
