@@ -38,9 +38,9 @@ session = Session()
 session.verify = False
 if len(sys.argv) > 1:
     url = sys.argv[1]
-elif len(sys.argv) > 2:
+if len(sys.argv) > 2:
     Version = sys.argv[2]
-else:
+if len(sys.argv) < 2:
     try:
         response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/WSA-Archive/main/UpdateInfo.cfg")
         text = response.read().decode("utf-8")
