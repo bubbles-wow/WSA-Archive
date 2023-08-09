@@ -1,0 +1,83 @@
+name: Archiver_byUpdateID
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+    inputs:
+      Version:
+        type: string
+      UpdateID:
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python 🏭
+        uses: actions/setup-python@v4
+        with:
+          check-latest: true
+          python-version: '3.x'
+
+      - name: Install Ubuntu Dependencies 🧑‍🏭
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: e2fsprogs attr unzip qemu-utils python3-venv
+          version: 1.0
+
+      - name: Install Python dependencies
+        run: 
+          pip install requests
+
+      - name: Download
+        id: download
+        run: |
+          cd ${{ github.workspace }}
+          if [ -n "${{ inputs.Version }}" ] && [ -n "${{ inputs.UpdateID }}" ]; then
+            result="Version=${{ inputs.Version }}"
+            python3 Archive_byURL.py ${{ inputs.UpdateID }} ${{ inputs.Version }}
+          else
+            result=$(head -n 1 UpdateInfo.cfg | sed 's/[[:space:]]*$//')
+            python3 Archive_byURL.py
+          fi
+          echo "$result" >> $GITHUB_OUTPUT
+      
+      - name: upload result
+        id: result
+        uses: actions/upload-artifact@v1
+        with:
+          name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          path: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          
+      - name: File Checksum ✔️
+        id: hash
+        run: |
+          filedir="${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle"
+          md5_hash=$(md5sum "$filedir" | cut -d ' ' -f 1)
+          sha256_hash=$(sha256sum "$filedir" | cut -d ' ' -f 1)
+          md5_hash_lower=$(echo "$md5_hash" | tr '[:upper:]' '[:lower:]')
+          sha256_hash_lower=$(echo "$sha256_hash" | tr '[:upper:]' '[:lower:]')
+          echo "MD5=$md5_hash_lower" >> $GITHUB_OUTPUT
+          echo "SHA256=$sha256_hash_lower" >> $GITHUB_OUTPUT
+          echo "MD5=$md5_hash_lower"
+          echo "SHA256=$sha256_hash_lower"
+          
+
+      - name: Update build to release 🤌
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          fail_on_unmatched_files: true
+          append_body: true
+          tag_name: ${{ steps.download.outputs.Version }}
+          body: |
+              File name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+              MD5: ${{ steps.hash.outputs.MD5 }}
+              SHA256: ${{ steps.hash.outputs.SHA256 }}
+          token: ${{ secrets.PAT }}
