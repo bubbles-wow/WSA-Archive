@@ -60,4 +60,3 @@ with open(dir + "/" + Filename, "wb") as f:
     f.close()
 if os.path.exists(dir + "/" + Filename):
     print("Successfully downloaded!")
-

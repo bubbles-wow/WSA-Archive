@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import urllib
 import urllib3
@@ -28,13 +29,25 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 dir = os.path.dirname(os.path.realpath(__file__))
 user_token = ""
 ReleaseType = "retail"
-UpdateID = "00000000-0000-0000-0000-000000000000"
+UpdateID = ""
 Version = "0.0.0.0"
 ReleaseType_list = ["retail", "RP", "WIS", "WIF"]
 RevisionNumber = 1
 session = Session()
 session.verify = False
-print(dir)
+if len(sys.argv) > 1:
+    UpdateID = sys.argv[1]
+if len(sys.argv) > 2:
+    Version = sys.argv[2]
+if len(sys.argv) < 2:
+    with open("UpdateInfo.cfg", "r") as f:
+        text = f.read()
+        f.close()
+    Version = Prop(text).get("Version")
+    UpdateID = Prop(text).get("UpdateID")
+if UpdateID == "":
+    print("No availavle UpdateID!")
+    exit()
 try:
     response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/MS-Account-Token/main/token.cfg")
     text = response.read().decode("utf-8")
@@ -45,15 +58,6 @@ try:
 except:
     print("Notice: You haven't logged in yet. Some UpdateID may not be available.")
     time.sleep(1)
-try:
-    response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/WSA-Archive/main/UpdateInfo.cfg")
-    text = response.read().decode("utf-8")
-    Version = Prop(text).get("Version")
-    UpdateID = Prop(text).get("UpdateID")
-    print(f"Version: {Version}")
-except:
-    print("Cannot get UpdateID from server! Please check your network and try again.")
-    exit()
 Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
 with open("FE3FileUrl.xml", "r") as f:
     FE3_file_content = f.read()
@@ -79,7 +83,6 @@ for l in doc.getElementsByTagName("FileLocation"):
         print(f"File name: {Filename}")
         print(f"Download URL: {url}")
         break
-
 os.makedirs(dir + "/output", exist_ok=True)
 dir = dir + "/output"
 response = requests.get(url)
