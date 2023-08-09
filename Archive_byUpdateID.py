@@ -42,6 +42,7 @@ if len(sys.argv) < 2:
     with open("UpdateInfo.cfg", "r") as f:
         text = f.read()
         f.close()
+    print(text)
     Version = Prop(text).get("Version")
     UpdateID = Prop(text).get("UpdateID")
 if UpdateID == "":
