@@ -41,15 +41,11 @@ if len(sys.argv) > 1:
 if len(sys.argv) > 2:
     Version = sys.argv[2]
 if len(sys.argv) < 2:
-    try:
-        response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/WSA-Archive/main/UpdateInfo.cfg")
-        text = response.read().decode("utf-8")
-        Version = Prop(text).get("Version")
-        url = Prop(text).get("URL")
-        print(f"Version: {Version}")
-    except:
-        print("Cannot get URL from server! Please check your network and try again.")
-        exit()
+    with open("UpdateInfo.cfg", "r") as f:
+        text = f.read()
+        f.close()
+    Version = Prop(text).get("Version")
+    url = Prop(text).get("URL")
 if url == "":
     print("No availavle URL!")
     exit()
