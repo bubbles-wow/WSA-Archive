@@ -1,6 +1,5 @@
 import os
 import sys
-import time
 import urllib
 import urllib3
 import requests
@@ -57,7 +56,6 @@ try:
     print(f"Last update time: {updatetime}\n")
 except:
     print("Notice: You haven't logged in yet. Some UpdateID may not be available.")
-    time.sleep(1)
 Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
 with open("FE3FileUrl.xml", "r") as f:
     FE3_file_content = f.read()
@@ -70,7 +68,6 @@ try:
     )
 except:
     print(f"\rNetwork Error! Please check your network and try again.",end="")
-    time.sleep(1)
     exit()
 doc = minidom.parseString(out.text)
 if len(out.text) < 1500:
