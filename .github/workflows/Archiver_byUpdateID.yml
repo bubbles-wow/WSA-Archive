@@ -1,11 +1,6 @@
 name: Archiver_byUpdateID
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
   workflow_dispatch:
     inputs:
       Version:
