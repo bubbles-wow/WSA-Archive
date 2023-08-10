@@ -50,7 +50,7 @@ if UpdateID == "":
 try:
     url = "https://api.github.com/repos/bubbles-wow/MS-Account-Token/contents/token.cfg"
     headers = {
-        "Authorization": "token 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"
+        "Authorization": "token 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"
     }
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
