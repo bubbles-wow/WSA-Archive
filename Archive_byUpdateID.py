@@ -48,14 +48,23 @@ if UpdateID == "":
     print("No availavle UpdateID!")
     exit()
 try:
-    response = urllib.request.urlopen("https://raw.githubusercontent.com/bubbles-wow/MS-Account-Token/main/token.cfg")
-    text = response.read().decode("utf-8")
-    user_token = Prop(text).get("user_code")
-    updatetime = Prop(text).get("update_time")
-    print("Successfully get user token from server!")
-    print(f"Last update time: {updatetime}\n")
-except:
-    print("Notice: You haven't logged in yet. Some UpdateID may not be available.")
+    url = "https://api.github.com/repos/bubbles-wow/MS-Account-Token/contents/token.cfg"
+    headers = {
+        "Authorization": "token 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"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        content = response.json()["content"]
+        content = content.encode("utf-8")
+        content = base64.b64decode(content)
+        text = content.decode("utf-8")
+        user_token = Prop(text).get("user_code")
+        updatetime = Prop(text).get("update_time")
+        print("Successfully get user token from server!")
+        print(f"Last update time: {updatetime}\n")
+    else:
+        user_token = ""
+        print(f"Failed to get user token from server! Error code: {response.status_code}\n")
 Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
 with open("FE3FileUrl.xml", "r") as f:
     FE3_file_content = f.read()
