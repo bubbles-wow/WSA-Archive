@@ -48,11 +48,7 @@ if UpdateID == "":
     print("No availavle UpdateID!")
     exit()
 try:
-    url = "https://api.github.com/repos/bubbles-wow/MS-Account-Token/contents/token.cfg"
-    headers = {
-        "Authorization": "token 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"
-    }
-    response = requests.get(url, headers=headers)
+    response = requests.get("https://api.github.com/repos/bubbles-wow/MS-Account-Token/contents/token.cfg")
     if response.status_code == 200:
         content = response.json()["content"]
         content = content.encode("utf-8")
