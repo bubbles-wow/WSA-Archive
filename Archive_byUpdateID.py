@@ -39,11 +39,21 @@ if len(sys.argv) > 1:
 if len(sys.argv) > 2:
     Version = sys.argv[2]
 if len(sys.argv) < 2:
-    with open("UpdateInfo.cfg", "r") as f:
-        text = f.read()
-        f.close()
-    Version = Prop(text).get("Version")
-    UpdateID = Prop(text).get("UpdateID")
+    try:
+        response = requests.get("https://api.github.com/repos/bubbles-wow/WSAUpdateChecker/contents/UpdateInfo.cfg")
+        if response.status_code == 200:
+            content = response.json()["content"]
+            content = content.encode("utf-8")
+            content = base64.b64decode(content)
+            text = content.decode("utf-8")
+            Version = Prop(text).get("Version")
+            UpdateID = Prop(text).get("UpdateID")
+        else:
+            print("No availavle UpdateID!")
+            exit()
+    except:
+        print("No availavle UpdateID!")
+        exit()
 if UpdateID == "":
     print("No availavle UpdateID!")
     exit()
