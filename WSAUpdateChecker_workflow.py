@@ -309,7 +309,7 @@ for user in users:
         "git add versionlist.json && git commit -m \"Update lost UpdateID\" && "
         "git push && exit"
     )
-    #subprocess.Popen(git, shell=True, stdout=None, stderr=None).wait()
+    subprocess.Popen(git, shell=True, stdout=None, stderr=None).wait()
     url = getURL(user, identities[max(info_list)][0][0], identities[max(info_list)][0][1], release_type)
     if url == "null":
         break
