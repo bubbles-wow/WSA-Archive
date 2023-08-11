@@ -47,9 +47,23 @@ jobs:
             python3 Archive_byURL.py
           fi
           echo "$result" >> $GITHUB_OUTPUT
+
+      - name: Check if release exists
+        id: check_release
+        run: |
+          existing_release=$(curl -s -H "Authorization: Bearer ${{ secrets.PAT }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.download.outputs.Version }}")
+          if [ -z "$existing_release" ]; then
+            echo "Release does not exist"
+            echo "::set-output name=release_exists::false"
+          else
+            echo "Release already exists"
+            echo "::set-output name=release_exists::true"
+          fi
       
       - name: upload result
         id: result
+        if: steps.check_release.outputs.release_exists == 'false'
         uses: actions/upload-artifact@v1
         with:
           name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
@@ -57,6 +71,7 @@ jobs:
           
       - name: File Checksum ✔️
         id: hash
+        if: steps.check_release.outputs.release_exists == 'false'
         run: |
           filedir="${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle"
           md5_hash=$(md5sum "$filedir" | cut -d ' ' -f 1)
@@ -70,6 +85,7 @@ jobs:
           
 
       - name: Update build to release 🤌
+        if: steps.check_release.outputs.release_exists == 'false'
         uses: softprops/action-gh-release@v0.1.15
         with:
           files: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
