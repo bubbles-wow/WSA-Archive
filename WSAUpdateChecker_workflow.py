@@ -117,6 +117,19 @@ def calculate_hashes(data):
         sha256_hash.update(chunk)
     return md5_hash.hexdigest(), sha256_hash.hexdigest()
 
+def run_workflow():
+    url = f"https://api.github.com/repos/bubbles-wow/WSA-Archive/actions/workflows/Archiver_byURL/dispatches"
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": f"Bearer {os.environ.get('PAT')}"
+    }
+    response = requests.post(url, headers=headers)
+    if response.status_code == 204:
+        print("Workflow run triggered successfully.")
+    else:
+        print("Failed to trigger workflow run.")
+        print("Response:", response.text)
+
 users = {""}
 try:
     url = "https://api.github.com/repos/bubbles-wow/MS-Account-Token/contents/token.cfg"
@@ -290,6 +303,7 @@ for user in users:
                     "git push origin main && exit"
                 )
                 subprocess.Popen(git, shell=True, stdout=None, stderr=None).wait()
+                run_workflow()
                 print("New version found: " + key.split("_")[1])
                 print("File name: " + "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + key.split("_")[1] + "_neutral_~_8wekyb3d8bbwe.Msixbundle")
                 print("URL: " + url)
