@@ -1,6 +1,6 @@
 import os
 import sys
-import urllib
+import base64
 import urllib3
 import requests
 
@@ -61,6 +61,9 @@ try:
     else:
         user_token = ""
         print(f"Failed to get user token from server! Error code: {response.status_code}\n")
+except:
+    user_token = ""
+    print("Failed to get user token from server!\n")
 Filename = "MicrosoftCorporationII.WindowsSubsystemForAndroid_" + Version + "_neutral_~_8wekyb3d8bbwe.Msixbundle"
 with open("FE3FileUrl.xml", "r") as f:
     FE3_file_content = f.read()
