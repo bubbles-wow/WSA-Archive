@@ -99,7 +99,7 @@ jobs:
             ```
             
             ## Hash
-            ```py
+            ```as3
             MD5=${{ steps.hash.outputs.MD5 }}
             SHA256=${{ steps.hash.outputs.SHA256 }}
             ```
