@@ -51,15 +51,14 @@ jobs:
       - name: Check if release exists
         id: check_release
         run: |
-          existing_release=$(curl -s -H "Authorization: Bearer ${{ secrets.PAT }}" \
+          response=$(curl -s -H "Authorization: Bearer ${{ secrets.PAT }}" \
             "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.download.outputs.Version }}")
-            length=$(expr length "$existing_release")
-          if [ "$length" -lt 150 ]; then
-            echo "Release does not exist"
-            echo "release_exists=false" >> $GITHUB_OUTPUT
-          else
+          if [ ${#response} -gt 200 ]; then
             echo "Release already exists"
             echo "release_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Release does not exist"
+            echo "release_exists=false" >> $GITHUB_OUTPUT
           fi
       
       - name: upload result
@@ -94,7 +93,21 @@ jobs:
           append_body: true
           tag_name: ${{ steps.download.outputs.Version }}
           body: |
-              File name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
-              MD5: ${{ steps.hash.outputs.MD5 }}
-              SHA256: ${{ steps.hash.outputs.SHA256 }}
+            ## File name
+            
+            ```
+            MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+            ```
+            
+            ## Hashes
+            
+            - MD5
+            ```
+            ${{ steps.hash.outputs.MD5 }}
+            ```
+
+            - SHA256
+            ```
+            ${{ steps.hash.outputs.SHA256 }}
+            ```
           token: ${{ secrets.PAT }}
