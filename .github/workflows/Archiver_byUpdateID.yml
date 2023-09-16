@@ -88,7 +88,17 @@ jobs:
           append_body: true
           tag_name: ${{ steps.download.outputs.Version }}
           body: |
-              File name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
-              MD5: ${{ steps.hash.outputs.MD5 }}
-              SHA256: ${{ steps.hash.outputs.SHA256 }}
+            ## File name
+            ```
+            MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+            ```
+            ## Hashes
+            - MD5
+              ```
+              ${{ steps.hash.outputs.MD5 }}
+              ```
+            - SHA256
+              ```
+              ${{ steps.hash.outputs.SHA256 }}
+              ```
           token: ${{ secrets.PAT }}
