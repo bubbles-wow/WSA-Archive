@@ -18,7 +18,7 @@ jobs:
       id: get
       run: |
         cd ${{ github.workspace }}
-        version = $(head -n 1 UpdateInfo.cfg | sed 's/[[:space:]]*$//')
+        version=$(head -n 1 UpdateInfo.cfg | sed 's/[[:space:]]*$//')
         echo "$version" >> $GITHUB_OUTPUT
 
     - name: Check if need build
