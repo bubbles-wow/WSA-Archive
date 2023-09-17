@@ -1,0 +1,33 @@
+name: Auto Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Auto Build in bubbles-wow/WSA-Modified
+      run: |
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: Bearer ${{ secrets.PAT }}" \
+          "https://api.github.com/repos/bubbles-wow/WSA-Modified/actions/workflows/Auto Build WSA X64/dispatches" \
+          -d '{
+            "ref": "main",
+            "inputs": {}
+          }'
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: Bearer ${{ secrets.PAT }}" \
+          "https://api.github.com/repos/bubbles-wow/WSA-Modified/actions/workflows/Auto Build WSA ARM64/dispatches" \
+          -d '{
+            "ref": "main",
+            "inputs": {}
+          }'
