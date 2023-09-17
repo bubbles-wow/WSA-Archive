@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
   workflow_dispatch:
 
 jobs:
@@ -13,13 +14,46 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Auto Build in bubbles-wow/WSA-Modified
+    - name: Get Version
+      id: get
+      run: |
+        version = $(head -n 1 UpdateInfo.cfg | tr -d '\n')
+        echo "$version" >> $GITHUB_OUTPUT
+
+    - name: Check if need build
+      id: check_release
+      run: |
+        x64=$(curl -s -H "Authorization: Bearer ${{ secrets.PAT }}" \
+          "https://api.github.com/repos/bubbles-wow/WSA-Modified/releases/tags/WSA_${{ steps.get.outputs.Version }}_x64")
+        if [ ${#x64} -gt 200 ]; then
+          echo "Don't need build x64"
+          echo "x64_build_need=false" >> $GITHUB_OUTPUT
+        else
+          echo "Need build x64"
+          echo "x64_build_need=true" >> $GITHUB_OUTPUT
+        fi
+        arm64=$(curl -s -H "Authorization: Bearer ${{ secrets.PAT }}" \
+          "https://api.github.com/repos/bubbles-wow/WSA-Modified/releases/tags/WSA_${{ steps.get.outputs.Version }}_arm64")
+        if [ ${#arm64} -gt 200 ]; then
+          echo "Don't need build arm64"
+          echo "x64_build_need=false" >> $GITHUB_OUTPUT
+        else
+          echo "Need build arm64"
+          echo "x64_build_need=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Auto Build x64 in bubbles-wow/WSA-Modified
+      if: steps.check_release.outputs.x64_build_need == 'true'
       run: |
         curl -X POST \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
           "https://api.github.com/repos/bubbles-wow/WSA-Modified/actions/workflows/auto_build_x64.yml/dispatches" \
           -d '{"ref": "main"}'
+
+    - name: Auto Build arm64 in bubbles-wow/WSA-Modified
+      if: steps.check_release.outputs.arm64_build_need == 'true'
+      run: |
         curl -X POST \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
