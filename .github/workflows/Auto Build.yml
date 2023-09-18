@@ -37,10 +37,10 @@ jobs:
           "https://api.github.com/repos/bubbles-wow/WSA-Modified/releases/tags/WSA_${{ steps.get.outputs.Version }}_arm64")
         if [ ${#arm64} -gt 200 ]; then
           echo "Don't need build arm64"
-          echo "x64_build_need=false" >> $GITHUB_OUTPUT
+          echo "arm64_build_need=false" >> $GITHUB_OUTPUT
         else
           echo "Need build arm64"
-          echo "x64_build_need=true" >> $GITHUB_OUTPUT
+          echo "arm64_build_need=true" >> $GITHUB_OUTPUT
         fi
 
     - name: Auto Build x64 in bubbles-wow/WSA-Modified
