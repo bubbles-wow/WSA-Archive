@@ -51,9 +51,7 @@ jobs:
       - name: Get Latest Tag 🏷️
         id: get_tag
         run: |
-          cd ${{ github.workspace }}
-          git fetch --tags
-          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          latest_tag=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
           echo "tag=$latest_tag" >> $GITHUB_OUTPUT
 
       - name: Check if release exists
