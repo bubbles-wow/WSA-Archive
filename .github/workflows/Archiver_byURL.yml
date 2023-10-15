@@ -48,6 +48,14 @@ jobs:
           fi
           echo "$result" >> $GITHUB_OUTPUT
 
+      - name: Get Latest Tag 🏷️
+        id: get_tag
+        run: |
+          cd ${{ github.workspace }}
+          git fetch --tags
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "tag=$latest_tag" >> $GITHUB_OUTPUT
+
       - name: Check if release exists
         id: check_release
         run: |
@@ -59,6 +67,11 @@ jobs:
           else
             echo "Release does not exist"
             echo "release_exists=false" >> $GITHUB_OUTPUT
+            if [ "${{ steps.get_tag.outputs.tag }}" > "${{ steps.download.outputs.Version }}" ]; then
+              echo "isPrerelease=true" >> $GITHUB_OUTPUT
+            else
+              echo "isPrerelease=false" >> $GITHUB_OUTPUT
+            fi
           fi
       
       - name: upload result
@@ -85,12 +98,38 @@ jobs:
           
 
       - name: Update build to release 🤌
-        if: steps.check_release.outputs.release_exists == 'false'
+        if: steps.check_release.outputs.isPrerelease == 'false'
         uses: softprops/action-gh-release@v0.1.15
         with:
           files: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
           fail_on_unmatched_files: true
           append_body: true
+          tag_name: ${{ steps.download.outputs.Version }}
+          body: |
+            ## File name
+            ```
+            MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+            ```
+            
+            ## Hashes
+            - MD5
+              ```
+              ${{ steps.hash.outputs.MD5 }}
+              ```
+            - SHA256
+              ```
+              ${{ steps.hash.outputs.SHA256 }}
+              ```
+          token: ${{ secrets.PAT }}
+
+      - name: Update build to Pre-release 🤌
+        if: steps.check_release.outputs.isPrerelease == 'true'
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          fail_on_unmatched_files: true
+          append_body: true
+          prerelease: true
           tag_name: ${{ steps.download.outputs.Version }}
           body: |
             ## File name
