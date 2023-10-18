@@ -43,15 +43,10 @@ jobs:
           fi
           echo "$result" >> $GITHUB_OUTPUT
       
-      - name: Get Latest Tag 🏷️
-        id: get_tag
-        run: |
-          latest_tag=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
-          echo "tag=$latest_tag" >> $GITHUB_OUTPUT
-
       - name: Check if release exists
         id: check_release
         run: |
+          latest_tag=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
           response=$(curl -s -H "Authorization: Bearer ${{ secrets.PAT }}" \
             "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.download.outputs.Version }}")
           if [ ${#response} -gt 200 ]; then
@@ -60,10 +55,10 @@ jobs:
           else
             echo "Release does not exist"
             echo "release_exists=false" >> $GITHUB_OUTPUT
-            if [ "${{ steps.get_tag.outputs.tag }}" > "${{ steps.download.outputs.Version }}" ]; then
-              echo "isPrerelease=true" >> $GITHUB_OUTPUT
-            else
+            if [ "$latest_tag" < "${{ steps.download.outputs.Version }}" ]; then
               echo "isPrerelease=false" >> $GITHUB_OUTPUT
+            else
+              echo "isPrerelease=true" >> $GITHUB_OUTPUT
             fi
           fi
 
