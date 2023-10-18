@@ -35,7 +35,7 @@ jobs:
         run: 
           pip install requests
 
-      - name: Download
+      - name: Download 📥
         id: download
         run: |
           cd ${{ github.workspace }}
@@ -48,7 +48,7 @@ jobs:
           fi
           echo "$result" >> $GITHUB_OUTPUT
 
-      - name: Check if release exists
+      - name: Check if release exists 🤔
         id: check_release
         run: |
           latest_tag=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
@@ -61,13 +61,13 @@ jobs:
             echo "Release does not exist"
             echo "release_exists=false" >> $GITHUB_OUTPUT
             if [ "$latest_tag" < "${{ steps.download.outputs.Version }}" ]; then
-              echo "isPrerelease=false" >> $GITHUB_OUTPUT
-            else
               echo "isPrerelease=true" >> $GITHUB_OUTPUT
+            else
+              echo "isPrerelease=false" >> $GITHUB_OUTPUT
             fi
           fi
       
-      - name: upload result
+      - name: Upload result 📤
         id: result
         if: steps.check_release.outputs.release_exists == 'false'
         uses: actions/upload-artifact@v1
