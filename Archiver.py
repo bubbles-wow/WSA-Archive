@@ -101,6 +101,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 UpdateID = ""
 Version = ""
 url = ""
+Filename = ""
 
 with open("UpdateInfo.cfg", "r") as f:
     text = f.read()
