@@ -124,13 +124,13 @@ if url == "":
             Version = Filename.split("_")[1]
         if url == "":
             print("Failed to get URL! Stop downloading.")
-            exit()
+            exit(0)
         else:
             print(f"Successfully get URL!")
 else:
     if Version == "":
         print("No availavle Version!")
-        exit()
+        exit(0)
 
 if Filename == "":
     Filename = f"MicrosoftCorporationII.WindowsSubsystemForAndroid_{Version}_neutral_~_8wekyb3d8bbwe.Msixbundle"
@@ -150,7 +150,7 @@ os.makedirs(dir, exist_ok=True)
 response = requests.get(url, stream=True)
 if response.status_code != 200:
     print("Failed to get URL! Stop downloading.")
-    exit()
+    exit(0)
 with open(os.path.join(dir, Filename), "wb") as f:
     for chunk in response.iter_content(chunk_size=1024):
         if chunk:
