@@ -26,22 +26,31 @@ jobs:
           packages: e2fsprogs attr unzip qemu-utils python3-venv
           version: 1.0
 
-      - name: Install Python dependencies
+      - name: Install Python dependencies 🧑‍🏭
         run: 
           pip install requests
+
+      - name: Set Version 📝
+        id: version
+        run: |
+          cd ${{ github.workspace }}
+          URL=$(sed -n 's/^URL=//p' UpdateInfo.cfg)
+          if [ -n "${{ inputs.Version }}" ]; then
+            echo "Version=${{ inputs.Version }}" > UpdateInfo.cfg
+            echo "Version=${{ inputs.Version }}" >> $GITHUB_OUTPUT
+          fi
+          if [ -n "${{ inputs.UpdateID }}" ]; then
+            echo "URL=${{ inputs.UpdateID }}" >> UpdateInfo.cfg
+          fi
+          echo "URL=$URL" >> UpdateInfo.cfg
 
       - name: Download 📥
         id: download
         run: |
           cd ${{ github.workspace }}
-          if [ -n "${{ inputs.Version }}" ] && [ -n "${{ inputs.UpdateID }}" ]; then
-            result="Version=${{ inputs.Version }}"
-            python3 Archive_byUpdateID.py ${{ inputs.UpdateID }} ${{ inputs.Version }}
-          else
-            result=$(head -n 1 UpdateInfo.cfg | sed 's/[[:space:]]*$//')
-            python3 Archive_byUpdateID.py
-          fi
-          echo "$result" >> $GITHUB_OUTPUT
+          python3 Archiver.py
+          echo "Version=$Version" >> $GITHUB_OUTPUT
+          echo "Filename=$Filename" >> $GITHUB_OUTPUT
       
       - name: Check if release exists 🤔
         id: check_release
@@ -67,14 +76,14 @@ jobs:
         if: steps.check_release.outputs.release_exists == 'false'
         uses: actions/upload-artifact@v1
         with:
-          name: MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
-          path: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          name: ${{ steps.download.outputs.Filename }}
+          path: ${{ github.workspace }}/download/${{ steps.download.outputs.Filename }}
           
       - name: File Checksum ✔️
         id: hash
         if: steps.check_release.outputs.release_exists == 'false'
         run: |
-          filedir="${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle"
+          filedir="${{ github.workspace }}/download/${{ steps.download.outputs.Filename }}"
           md5_hash=$(md5sum "$filedir" | cut -d ' ' -f 1)
           sha256_hash=$(sha256sum "$filedir" | cut -d ' ' -f 1)
           md5_hash_lower=$(echo "$md5_hash" | tr '[:upper:]' '[:lower:]')
@@ -84,19 +93,18 @@ jobs:
           echo "MD5=$md5_hash_lower"
           echo "SHA256=$sha256_hash_lower"
           
-
       - name: Update build to release 🤌
         if: steps.check_release.outputs.isPrerelease == 'false'
         uses: softprops/action-gh-release@v0.1.15
         with:
-          files: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          files: ${{ github.workspace }}/download/${{ steps.download.outputs.Filename }}
           fail_on_unmatched_files: true
           append_body: true
           tag_name: ${{ steps.download.outputs.Version }}
           body: |
             ## File name
             ```
-            MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+            ${{ github.workspace }}/download/${{ steps.download.outputs.Filename }}
             ```
             
             ## Hashes
@@ -114,7 +122,7 @@ jobs:
         if: steps.check_release.outputs.isPrerelease == 'true'
         uses: softprops/action-gh-release@v0.1.15
         with:
-          files: ${{ github.workspace }}/output/MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+          files: ${{ github.workspace }}/download/${{ steps.download.outputs.Filename }}
           fail_on_unmatched_files: true
           append_body: true
           prerelease: true
@@ -122,7 +130,7 @@ jobs:
           body: |
             ## File name
             ```
-            MicrosoftCorporationII.WindowsSubsystemForAndroid_${{ steps.download.outputs.Version }}_neutral_~_8wekyb3d8bbwe.Msixbundle
+            ${{ github.workspace }}/download/${{ steps.download.outputs.Filename }}
             ```
             
             ## Hashes
