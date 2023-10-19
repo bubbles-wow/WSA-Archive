@@ -1,4 +1,4 @@
-name: Archiver_byURL
+name: Archiver
 
 on:
   push:
@@ -9,8 +9,13 @@ on:
   workflow_dispatch:
     inputs:
       Version:
+        description: 'Version of WSA to archive.'
         type: string
       URL:
+        description: 'URL of WSA to archive. (Higher priority than Version)'
+        type: string
+      UpdateID:
+        description: 'UpdateID of WSA in Microsoft Store. It maybe replace Version to right version.'
         type: string
 
 jobs:
@@ -35,7 +40,7 @@ jobs:
         run: 
           pip install requests
 
-      - name: Set Version 📝
+      - name: Set UP Dispatch 📝
         id: version
         run: |
           cd ${{ github.workspace }}
@@ -44,7 +49,9 @@ jobs:
             echo "Version=${{ inputs.Version }}" > UpdateInfo.cfg
             echo "Version=${{ inputs.Version }}" >> $GITHUB_OUTPUT
           fi
-          echo "UpdateID=$UpdateID" >> UpdateInfo.cfg
+          if [ -n "${{ inputs.UpdateID }}" ]; then
+            echo "UpdateID=${{ inputs.UpdateID }}" >> UpdateInfo.cfg
+          fi
           if [ -n "${{ inputs.URL }}" ]; then
             echo "URL=${{ inputs.URL }}" >> UpdateInfo.cfg
           fi
