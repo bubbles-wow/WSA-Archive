@@ -134,12 +134,8 @@ else:
 
 if Filename == "":
     Filename = f"MicrosoftCorporationII.WindowsSubsystemForAndroid_{Version}_neutral_~_8wekyb3d8bbwe.Msixbundle"
-with open(os.environ["WSA_INFO"], "r") as environ_file:
-    env = Prop(environ_file.read())
-    env.Version = Version
-    env.Filename = Filename
-with open(os.environ["WSA_INFO"], "w") as environ_file:
-    environ_file.write(str(env))
+os.popen(f"echo 'Filename={Filename}' >> $GITHUB_OUTPUT")
+os.popen(f"echo 'Version={Version}' >> $GITHUB_OUTPUT")
 
 print(f"File name: {Filename}")
 print(f"Download URL: {url}")
