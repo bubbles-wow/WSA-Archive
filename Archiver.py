@@ -117,13 +117,14 @@ if url == "":
     else:
         url = GetURL(UpdateID)
         response = requests.get(url, stream=True)
-        while response.status_code != 200:
+        if response.status_code != 200:
             print("Failed to get URL! Retrying...")
-            response = requests.get(url, stream=True)
-        Filename = response.headers["Content-Disposition"].split(";")[1].split("=")[1].replace('"', '')
-        Version = Filename.split("_")[1]
+        else:
+            Filename = response.headers["Content-Disposition"].split(";")[1].split("=")[1].replace('"', '')
+            Version = Filename.split("_")[1]
         if url == "":
             print("Failed to get URL! Stop downloading.")
+            exit()
         else:
             print(f"Successfully get URL!")
 else:
@@ -143,9 +144,9 @@ dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "download")
 os.makedirs(dir, exist_ok=True)
 
 response = requests.get(url, stream=True)
-while response.status_code != 200:
-    print("Failed to download! Retrying...")
-    response = requests.get(url, stream=True)
+if response.status_code != 200:
+    print("Failed to get URL! Stop downloading.")
+    exit()
 with open(os.path.join(dir, Filename), "wb") as f:
     for chunk in response.iter_content(chunk_size=1024):
         if chunk:
