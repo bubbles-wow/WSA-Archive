@@ -53,6 +53,7 @@ jobs:
         id: download
         run: |
           cd ${{ github.workspace }}
+          export WSA_INFO
           python3 Archiver.py
           echo "Version=$Version" >> $GITHUB_OUTPUT
           echo "Filename=$Filename" >> $GITHUB_OUTPUT

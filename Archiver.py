@@ -134,8 +134,12 @@ else:
 
 if Filename == "":
     Filename = f"MicrosoftCorporationII.WindowsSubsystemForAndroid_{Version}_neutral_~_8wekyb3d8bbwe.Msixbundle"
-os.environ["Version"] = Version
-os.environ["Filename"] = Filename
+with open(os.environ["WSA_INFO"], "r") as environ_file:
+    env = Prop(environ_file.read())
+    env.Version = Version
+    env.Filename = Filename
+with open(os.environ["WSA_INFO"], "w") as environ_file:
+    environ_file.write(str(env))
 
 print(f"File name: {Filename}")
 print(f"Download URL: {url}")
