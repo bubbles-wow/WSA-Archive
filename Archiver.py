@@ -131,6 +131,23 @@ else:
     if Version == "":
         print("No availavle Version!")
         exit(0)
+    else:
+        response = requests.get(url, stream=True)
+        if response.status_code != 200:
+            print("No availavle URL! Try to download by UpdateID from Microsoft Store.")
+            url = GetURL(UpdateID)
+            response = requests.get(url, stream=True)
+            if response.status_code != 200:
+                print("Failed to get URL! Stop downloading.")
+                exit(0)
+            else:
+                Filename = response.headers["Content-Disposition"].split(";")[1].split("=")[1].replace('"', '')
+                Version = Filename.split("_")[1]
+            if url == "":
+                print("Failed to get URL! Stop downloading.")
+                exit(0)
+            else:
+                print(f"Successfully get URL!")
 
 if Filename == "":
     Filename = f"MicrosoftCorporationII.WindowsSubsystemForAndroid_{Version}_neutral_~_8wekyb3d8bbwe.Msixbundle"
