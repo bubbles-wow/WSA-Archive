@@ -99,8 +99,9 @@ Description="
     \`\`\`
     $BuildID
     \`\`\`
-  - Chromium WebView $WebViewVersion"
+  - Chromium WebView Version: \`$WebViewVersion\`"
 
+touch ./INFO.md || abort
 echo "$Description" > ./INFO.md || abort
 
 sudo umount ./system || abort

@@ -19,7 +19,7 @@ on:
         type: string
 
 jobs:
-  build:
+  archive:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -158,6 +158,7 @@ jobs:
         id: info
         run: |
           cd ${{ github.workspace }}
+          sudo chmod 700 CheckImage.sh
           sudo ./CheckImage.sh || true
           if [ -f INFO.md ]; then
             ImageInfo=$(cat INFO.md)
