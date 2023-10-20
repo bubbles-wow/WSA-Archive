@@ -161,11 +161,9 @@ jobs:
           sudo chmod 700 CheckImage.sh
           sudo ./CheckImage.sh || true
           if [ -e ./download/INFO.md ]; then
-            {
-              echo "INFO=<<EOF"
-              cat ./download/INFO.md
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
+            echo "INFO<<EOF" >> $GITHUB_OUTPUT
+            cat ./download/INFO.md >> $GITHUB_OUTPUT
+            echo "EOF >> $GITHUB_OUTPUT
             echo "update=true" >> $GITHUB_OUTPUT
           fi
 
