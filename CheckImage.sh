@@ -101,10 +101,10 @@ Description="
     \`\`\`
   - Chromium WebView Version: \`$WebViewVersion\`"
 
-touch INFO.md || abort
+sudo touch INFO.md || abort
 sudo chown root:root INFO.md || abort
-chmod 777 INFO.md || abort
-echo "$Description" > INFO.md || abort
+sudo chmod 777 INFO.md || abort
+sudo echo "$Description" > INFO.md || abort
 
 sudo umount ./system || abort
 sudo umount ./product || abort
