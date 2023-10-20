@@ -80,7 +80,7 @@ echo "BuildID: $BuildID"
 echo "Kernel: $Kernel"
 
 AndroidInfoURL="https://developer.android.google.cn/about/versions/$AndroidVersion"
-SecPatchURL="https://source.android.com/security/bulletin/$SeculityPatch"
+SecPatchURL="https://source.android.com/security/bulletin/${SeculityPatch:0:9}1"
 SecPatchHead=$(curl -s -L $SecPatchURL | grep -oP '<title>\K[^<]+' | sed 's/&nbsp;//g')
 
 Description="

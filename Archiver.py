@@ -112,23 +112,23 @@ if url == "":
     print("No availavle URL! Try to download by UpdateID from Microsoft Store.")
     if UpdateID == "":
         print("No UpdateID! Stop downloading.")
+        exit(1)
     else:
         url = GetURL(UpdateID)
-        response = requests.get(url, stream=True)
-        if response.status_code != 200:
-            print("Failed to get URL! Retrying...")
-        else:
-            Filename = response.headers["Content-Disposition"].split(";")[1].split("=")[1].replace('"', '')
-            Version = Filename.split("_")[1]
         if url == "":
             print("Failed to get URL! Stop downloading.")
-            exit(0)
+            exit(1)
+        elif requests.get(url, stream=True).status_code != 200:
+            print("Failed to get URL! Stop downloading.")
         else:
             print(f"Successfully get URL!")
+            response = requests.get(url, stream=True)
+            Filename = response.headers["Content-Disposition"].split(";")[1].split("=")[1].replace('"', '')
+            Version = Filename.split("_")[1]
 else:
     if Version == "":
         print("No availavle Version!")
-        exit(0)
+        exit(1)
     else:
         response = requests.get(url, stream=True)
         if response.status_code != 200:
@@ -137,13 +137,13 @@ else:
             response = requests.get(url, stream=True)
             if response.status_code != 200:
                 print("Failed to get URL! Stop downloading.")
-                exit(0)
+                exit(1)
             else:
                 Filename = response.headers["Content-Disposition"].split(";")[1].split("=")[1].replace('"', '')
                 Version = Filename.split("_")[1]
             if url == "":
                 print("Failed to get URL! Stop downloading.")
-                exit(0)
+                exit(1)
             else:
                 print(f"Successfully get URL!")
 
@@ -161,7 +161,7 @@ os.makedirs(dir, exist_ok=True)
 response = requests.get(url, stream=True)
 if response.status_code != 200:
     print("Failed to get URL! Stop downloading.")
-    exit(0)
+    exit(1)
 with open(os.path.join(dir, Filename), "wb") as f:
     for chunk in response.iter_content(chunk_size=1024):
         if chunk:
