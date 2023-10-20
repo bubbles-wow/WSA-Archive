@@ -161,7 +161,8 @@ jobs:
           sudo chmod 700 CheckImage.sh
           sudo ./CheckImage.sh || true
           if [ -e ./download/INFO.md ]; then
-            echo "INFO=$(cat ./download/INFO.md)" >> $GITHUB_OUTPUT
+            INFO=$(cat ./download/INFO.md)
+            echo "::set-output name=INFO::$INFO"
             echo "update=true" >> $GITHUB_OUTPUT
           fi
 
