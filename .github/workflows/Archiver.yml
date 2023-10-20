@@ -160,8 +160,8 @@ jobs:
           cd ${{ github.workspace }}
           sudo chmod 700 CheckImage.sh
           sudo ./CheckImage.sh || true
-          if [ -e INFO.md ]; then
-            ImageInfo=$(cat INFO.md)
+          if [ -e ./download/INFO.md ]; then
+            ImageInfo=$(cat ./download/INFO.md)
             echo "update=true" >> $GITHUB_OUTPUT
             echo "ImageInfo=$ImageInfo" >> $GITHUB_OUTPUT
           fi
