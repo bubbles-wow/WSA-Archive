@@ -154,20 +154,23 @@ jobs:
               ```
           token: ${{ secrets.PAT }}
 
-      - name: Check and Update Image Info 📝
+      - name: Check Image Info 📝
         id: info
         run: |
           cd ${{ github.workspace }}
           sudo chmod 700 CheckImage.sh
           sudo ./CheckImage.sh || true
           if [ -e ./download/INFO.md ]; then
-          response=$(curl -s -H "Authorization: Bearer ${{ secrets.PAT }}" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.download.outputs.Version }}")
-          body=$(echo "$response" | jq -r '.body')
-          ImageInfo=$(cat ./download/INFO.md)
-          body="${body}
-          ${ImageInfo}"
-          echo "$body"
-          curl -X PATCH -H "Authorization: Bearer ${{ secrets.PAT }}" -d "{\"body\": \"$body\"}" "https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.download.outputs.Version }}"
+            echo "INFO=$(cat ./download/INFO.md)" >> $GITHUB_OUTPUT
+            echo "update=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Update Image Info 🤌
+        if: steps.info.outputs.update == 'true'
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          append_body: true
+          tag_name: ${{ steps.download.outputs.Version }}
+          body: |
+            ${{ steps.info.outputs.INFO }}
+          token: ${{ secrets.PAT }}
