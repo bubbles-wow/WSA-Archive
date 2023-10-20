@@ -163,7 +163,6 @@ jobs:
           if [ -e ./download/INFO.md ]; then
             echo "INFO<<EOF" >> $GITHUB_OUTPUT
             cat ./download/INFO.md >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
             echo "update=true" >> $GITHUB_OUTPUT
           fi
 
