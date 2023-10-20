@@ -44,6 +44,7 @@ jobs:
         id: version
         run: |
           cd ${{ github.workspace }}
+          sudo chmod 766 UpdateInfo.cfg
           UpdateID=$(sed -n 's/^UpdateID=//p' UpdateInfo.cfg)
           if [ -n "${{ inputs.Version }}" ]; then
             echo "Version=${{ inputs.Version }}" > UpdateInfo.cfg
@@ -164,7 +165,7 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.download.outputs.Version }}" \
             | jq -r '.body')
           if [[ $body == *"## Details"* ]]; then
-          echo "update=false" >> $GITHUB_OUTPUT
+            echo "update=false" >> $GITHUB_OUTPUT
           elif [ -e ./download/INFO.md ]; then
             echo "INFO<<EOF" >> $GITHUB_OUTPUT
             cat ./download/INFO.md >> $GITHUB_OUTPUT
