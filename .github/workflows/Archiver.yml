@@ -45,16 +45,24 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           sudo chmod 766 UpdateInfo.cfg
+          Version=$(sed -n 's/^Version=//p' UpdateInfo.cfg)
           UpdateID=$(sed -n 's/^UpdateID=//p' UpdateInfo.cfg)
+          URL=$(sed -n 's/^URL=//p' UpdateInfo.cfg)
           if [ -n "${{ inputs.Version }}" ]; then
             echo "Version=${{ inputs.Version }}" > UpdateInfo.cfg
             echo "Version=${{ inputs.Version }}" >> $GITHUB_OUTPUT
+          else
+            echo "Version=$Version" > UpdateInfo.cfg
           fi
           if [ -n "${{ inputs.UpdateID }}" ]; then
             echo "UpdateID=${{ inputs.UpdateID }}" >> UpdateInfo.cfg
+          else
+            echo "UpdateID=$UpdateID" >> UpdateInfo.cfg
           fi
           if [ -n "${{ inputs.URL }}" ]; then
             echo "URL=${{ inputs.URL }}" >> UpdateInfo.cfg
+          else
+            echo "URL=$URL" >> UpdateInfo.cfg
           fi
 
       - name: Download 📥
