@@ -45,23 +45,23 @@ if [ "$version" \< "2302" ]; then
     unzip wsa.zip system.img product.img || abort
 else
     unzip wsa.zip system.vhdx product.vhdx || abort
-    vhdx_to_raw_img system.vhdx system.img || abort
-    vhdx_to_raw_img product.vhdx product.img || abort
+    vhdx_to_raw_img system.vhdx system.img > /dev/null || abort
+    vhdx_to_raw_img product.vhdx product.img > /dev/null || abort
 fi
 unzip wsa.zip Tools/kernel || abort
 mv ./Tools/kernel ./kernel || abort
 rm -rf wsa.zip ./Tools || abort
 image_type=$(check_image_type system.img) || abort
 if [ "$image_type" == "ext4" ]; then
-    ro_ext4_img_to_rw system.img || abort
-    ro_ext4_img_to_rw product.img || abort
+    ro_ext4_img_to_rw system.img > /dev/null || abort
+    ro_ext4_img_to_rw product.img > /dev/null || abort
 else
     abort "system image is not supported"
 fi
 mkdir -p ./system || abort
 mkdir -p ./product || abort
-resize_img system.img || abort
-resize_img product.img || abort
+resize_img system.img > /dev/null || abort
+resize_img product.img > /dev/null || abort
 sudo mount -o loop system.img ./system || abort
 sudo mount -o loop product.img ./product || abort
 
@@ -101,8 +101,8 @@ Description="
     \`\`\`
   - Chromium WebView Version: \`$WebViewVersion\`"
 
-touch ./INFO.md || abort
-echo "$Description" > ./INFO.md || abort
+touch INFO.md || abort
+echo "$Description" > INFO.md || abort
 
 sudo umount ./system || abort
 sudo umount ./product || abort
