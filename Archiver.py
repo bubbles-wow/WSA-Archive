@@ -73,7 +73,7 @@ def GetURL(UpdateID):
             response = requests.get("https://api.github.com/repos/bubbles-wow/MS-Account-Token/contents/token.cfg")
             while response.status_code != 200:
                 print("Failed to get user code from github! Retrying...")
-                continue
+                response = requests.get("https://api.github.com/repos/bubbles-wow/MS-Account-Token/contents/token.cfg")
             content = response.json()["content"]
             content = content.encode("utf-8")
             content = base64.b64decode(content)
