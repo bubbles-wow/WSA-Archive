@@ -98,8 +98,8 @@ Description="
   - Build ID: 
     \`\`\`
     $BuildID
-    \`\`\`"
-  - Chromium WebView $WebViewVersion
+    \`\`\`
+  - Chromium WebView $WebViewVersion"
 
 echo "$Description" > ./INFO.md || abort
 
