@@ -83,7 +83,8 @@ AndroidInfoURL="https://developer.android.google.cn/about/versions/$AndroidVersi
 SecPatchURL="https://source.android.com/security/bulletin/$SeculityPatch"
 SecPatchHead=$(curl -s -L $SecPatchURL | grep -oP '<title>\K[^<]+' | sed 's/&nbsp;//g')
 
-Description="## Details
+Description="
+## Details
   - [Android $AndroidVersion]($AndroidInfoURL) | API $API
   - Seculity patch
     \`\`\`
