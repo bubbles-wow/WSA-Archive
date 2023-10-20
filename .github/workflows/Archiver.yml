@@ -50,10 +50,8 @@ jobs:
           URL=$(sed -n 's/^URL=//p' UpdateInfo.cfg)
           if [ -n "${{ inputs.Version }}" ]; then
             echo "Version=${{ inputs.Version }}" > UpdateInfo.cfg
-            echo "Version=${{ inputs.Version }}" >> $GITHUB_OUTPUT
           else
             echo "Version=$Version" > UpdateInfo.cfg
-            echo "Version=$Version" >> $GITHUB_OUTPUT
           fi
           if [ -n "${{ inputs.UpdateID }}" ]; then
             echo "UpdateID=${{ inputs.UpdateID }}" >> UpdateInfo.cfg
