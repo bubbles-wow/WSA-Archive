@@ -102,7 +102,8 @@ Description="
   - Chromium WebView Version: \`$WebViewVersion\`"
 
 touch INFO.md || abort
-sudo chown $USER:$USER INFO.md || abort
+sudo chown root:root INFO.md || abort
+chmod 777 INFO.md || abort
 echo "$Description" > INFO.md || abort
 
 sudo umount ./system || abort
