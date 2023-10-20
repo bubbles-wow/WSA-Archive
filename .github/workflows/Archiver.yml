@@ -153,3 +153,23 @@ jobs:
               ${{ steps.hash.outputs.SHA256 }}
               ```
           token: ${{ secrets.PAT }}
+
+      - name: Check Image Info 📝
+        id: info
+        run: |
+          cd ${{ github.workspace }}
+          sudo ./CheckImage.sh || true
+          if [ -f INFO.md ]; then
+            ImageInfo=$(cat INFO.md)
+            echo "update=true" >> $GITHUB_OUTPUT
+            echo "ImageInfo=$ImageInfo" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Image Info 🤌
+        if: steps.info.outputs.update == 'true'
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          tag_name: ${{ steps.download.outputs.Version }}
+          body: |
+            ${{ steps.info.outputs.ImageInfo }}
+          token: ${{ secrets.PAT }}
