@@ -33,7 +33,7 @@ jobs:
       - name: Install Ubuntu Dependencies 🧑‍🏭
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: e2fsprogs unzip qemu-utils aapt jq erofs-utils 
+          packages: e2fsprogs unzip qemu-utils aapt jq 
           version: 1.0
 
       - name: Install Python dependencies 🧑‍🏭

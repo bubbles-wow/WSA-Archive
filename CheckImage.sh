@@ -6,57 +6,70 @@ abort() {
     exit 1
 }
 
-ro_ext4_img_to_rw() {
-    resize_img "$1" "$(($(du --apparent-size -sB512 "$1" | cut -f1) * 2))"s || return 1
-    e2fsck -fp -E unshare_blocks "$1" || return 1
-    resize_img "$1" || return 1
-    return 0
-}
-
-resize_img() {
-    sudo e2fsck -pf "$1" || return 1
-    if [ "$2" ]; then
-        sudo resize2fs "$1" "$2" || return 1
-    else
-        sudo resize2fs -M "$1" || return 1
-    fi
+fix_ext4_img() {
+    sudo resize2fs "$1" "$(($(du --apparent-size -sB512 "$1" | cut -f1) * 2))"s > /dev/null || return 1
+    sudo e2fsck -fp -E unshare_blocks "$1" > /dev/null || return 1
+    sudo e2fsck -pf "$1" > /dev/null || return 1
     return 0
 }
 
 cd ./download
 FileName=$(ls *.Msixbundle) || abort
 PackageVersion=$(echo $FileName | cut -d'_' -f2) || abort
+MainVersion=$(echo $PackageVersion | cut -d'.' -f1) || abort
 mv $FileName wsa.zip || abort
-unzip wsa.zip "WsaPackage_${PackageVersion}_x64_Release-Nightly.msix" || abort
+echo "Found package: $FileName"
+echo ""
+
+echo "Extract package..."
+unzip wsa.zip "WsaPackage_${PackageVersion}_x64_Release-Nightly.msix" > /dev/null || abort
 rm -rf wsa.zip || abort
 mv "WsaPackage_${PackageVersion}_x64_Release-Nightly.msix" wsa.zip || abort
-if [ "PackageVersion" \< "2302" ]; then
-    unzip wsa.zip system.img product.img || abort
+echo "Extract done!"
+echo ""
+
+echo "Extract image and kernel..."
+if [ "$MainVersion" -ge "2302" ]; then
+    unzip wsa.zip system.vhdx product.vhdx > /dev/null || abort
 else
-    unzip wsa.zip system.vhdx product.vhdx || abort
+    unzip wsa.zip system.img product.img > /dev/null || abort
+fi
+unzip wsa.zip Tools/kernel > /dev/null || abort
+mv ./Tools/kernel ./kernel || abort
+rm -rf wsa.zip ./Tools || abort
+echo "Extract done!"
+echo ""
+
+if [ "$MainVersion" -ge "2302" ]; then
+    echo "Convert vhdx to img..."
     qemu-img convert -q -f vhdx -O raw system.vhdx system.img || abort
     qemu-img convert -q -f vhdx -O raw product.vhdx product.img || abort
     rm -rf system.vhdx product.vhdx || abort
+    echo "Convert done!"
 fi
-unzip wsa.zip Tools/kernel || abort
-mv ./Tools/kernel ./kernel || abort
-rm -rf wsa.zip ./Tools || abort
+echo ""
 
 mkdir -p ./system || abort
 mkdir -p ./product || abort
 ImageType=$(blkid -o value -s TYPE system.img) || abort
 if [ "$ImageType" == "ext4" ]; then
-    ro_ext4_img_to_rw system.img > /dev/null || abort
-    ro_ext4_img_to_rw product.img > /dev/null || abort
+    echo "Mount ext4 image..."
+    fix_ext4_img system.img > /dev/null || abort
+    fix_ext4_img product.img > /dev/null || abort
     sudo mount -o loop system.img ./system || abort
     sudo mount -o loop product.img ./product || abort
 elif [ "$ImageType" == "erofs" ]; then
-    sudo mount -o loop system.img ./system || abort
-    sudo mount -o loop product.img ./product || abort
+    echo "Mount erofs image..."
+    sudo ../bin/fuse.erofs system.img ./system > /dev/null || abort
+    sudo ../bin/fuse.erofs product.img ./product > /dev/null || abort
 else
     abort "system image is not supported"
 fi
+echo "Mount image done!"
+echo ""
 
+echo "Check image info:"
+echo ""
 BuildProp=$(sudo cat ./system/system/build.prop)
 AndroidVersion=$(echo "$BuildProp" | sed -n 's/^ro.build.version.release=//p')
 API=$(echo "$BuildProp" | sed -n 's/^ro.build.version.sdk=//p')
@@ -108,7 +121,14 @@ Description="
 
 touch INFO.md || abort
 sudo echo "$Description" > INFO.md || abort
+echo ""
 
+echo "Unmount image..."
 sudo umount ./system || abort
 sudo umount ./product || abort
+echo "Unmount done!"
+echo ""
+
+echo "Clean up..."
 rm -rf ./system ./product system.img product.img kernel || abort
+echo "Clean up done!"
