@@ -9,13 +9,13 @@ on:
   workflow_dispatch:
     inputs:
       Version:
-        description: 'Version of WSA to archive.'
+        description: '"Version" of WSA to archive.'
         type: string
       URL:
-        description: 'URL of WSA to archive. (Higher priority than Version)'
+        description: '"URL" of WSA to archive. (Higher priority than "UpdateID")'
         type: string
       UpdateID:
-        description: 'UpdateID of WSA in Microsoft Store. It maybe replace Version to right version.'
+        description: '"UpdateID" of WSA in Microsoft Store. It maybe replace "Version" to right version.'
         type: string
 
 jobs:
