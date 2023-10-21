@@ -14,7 +14,7 @@ fix_ext4_img() {
 }
 
 cd ./download
-FileName=$(ls *.Msixbundle) || abort
+FileName=$(find -name "*.Msixbundle" | head -n 1) || abort
 PackageVersion=$(echo $FileName | cut -d'_' -f2) || abort
 MainVersion=$(echo $PackageVersion | cut -d'.' -f1) || abort
 mv $FileName wsa.zip || abort
@@ -71,16 +71,16 @@ echo ""
 
 echo "Check image info:"
 echo ""
-BuildProp=$(sudo cat ./system/system/build.prop)
+BuildProp=$(sudo cat ./system/system/build.prop) || abort
 AndroidVersion=$(echo "$BuildProp" | sed -n 's/^ro.build.version.release=//p')
 API=$(echo "$BuildProp" | sed -n 's/^ro.build.version.sdk=//p')
 SeculityPatch=$(echo "$BuildProp" | sed -n 's/^ro.build.version.security_patch=//p')
 BuildID=$(echo "$BuildProp" | sed -n 's/^ro.build.id=//p')
 
-KernelInfo=$(file kernel | awk -F ', ' '{print $2}' | sed 's/version //; s/(\(.*\)) //')
+KernelInfo=$(file kernel | awk -F ', ' '{print $2}' | sed 's/version //; s/(\(.*\)) //') || abort
 KernelMain=$(echo $KernelInfo | cut -d'-' -f1)
 
-WebViewVersion=$(sudo aapt dump badging ./product/app/webview/webview.apk | grep -oP "versionName='\K[^']+")
+WebViewVersion=$(sudo aapt dump badging ./product/app/webview/webview.apk | grep -oP "versionName='\K[^']+") || abort
 
 if [ "$API" == "32" ]; then
     AndroidVersion="12L"
@@ -89,9 +89,9 @@ else
     AndroidInfoURL="https://developer.android.google.cn/about/versions/$AndroidVersion"
 fi
 
-SecPatchURL="https://source.android.com/security/bulletin/${SeculityPatch:0:9}1"
-SecPatchHead=$(curl -s -L $SecPatchURL | grep -oP '<title>\K[^<]+' | sed 's/&nbsp;//g')
-SecPatchDate=$(echo $SecPatchHead | grep -oP '\b[A-Z][a-z]+ \d{4}\b')
+SecPatchURL="https://source.android.com/security/bulletin/${SeculityPatch:0:9}1" || abort
+SecPatchHead=$(curl -s -L $SecPatchURL | grep -oP '<title>\K[^<]+' | sed 's/&nbsp;//g') || abort
+SecPatchDate=$(echo $SecPatchHead | grep -oP '\b[A-Z][a-z]+ \d{4}\b') || abort
 
 echo "PackageVersion: $PackageVersion"
 echo "AndroidVersion: $AndroidVersion"
