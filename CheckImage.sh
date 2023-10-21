@@ -51,8 +51,8 @@ if [ "$ImageType" == "ext4" ]; then
     sudo mount -o loop system.img ./system || abort
     sudo mount -o loop product.img ./product || abort
 elif [ "$ImageType" == "erofs" ]; then
-    sudo mount -t erofs system.img ./system || abort
-    sudo mount -t erofs product.img ./product || abort
+    sudo mount -o loop system.img ./system || abort
+    sudo mount -o loop product.img ./product || abort
 else
     abort "system image is not supported"
 fi
