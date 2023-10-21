@@ -60,6 +60,7 @@ if [ "$ImageType" == "ext4" ]; then
     sudo mount -o loop product.img ./product || abort
 elif [ "$ImageType" == "erofs" ]; then
     echo "Mount erofs image..."
+    sudo chmod 777 ../bin/fuse.erofs || abort
     sudo ../bin/fuse.erofs system.img ./system > /dev/null || abort
     sudo ../bin/fuse.erofs product.img ./product > /dev/null || abort
 else
