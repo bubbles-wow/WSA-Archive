@@ -6,6 +6,23 @@ abort() {
     exit 1
 }
 
+ro_ext4_img_to_rw() {
+    resize_img "$1" "$(($(du --apparent-size -sB512 "$1" | cut -f1) * 2))"s || return 1
+    e2fsck -fp -E unshare_blocks "$1" || return 1
+    resize_img "$1" || return 1
+    return 0
+}
+
+resize_img() {
+    sudo e2fsck -pf "$1" || return 1
+    if [ "$2" ]; then
+        sudo resize2fs "$1" "$2" || return 1
+    else
+        sudo resize2fs -M "$1" || return 1
+    fi
+    return 0
+}
+
 cd ./download
 FileName=$(ls *.Msixbundle) || abort
 PackageVersion=$(echo $FileName | cut -d'_' -f2) || abort
@@ -29,8 +46,10 @@ mkdir -p ./system || abort
 mkdir -p ./product || abort
 ImageType=$(blkid -o value -s TYPE system.img) || abort
 if [ "$ImageType" == "ext4" ]; then
-    sudo mount -t ext4 -o loop system.img ./system || abort
-    sudo mount -t ext4 -o loop product.img ./product || abort
+    ro_ext4_img_to_rw system.img > /dev/null || abort
+    ro_ext4_img_to_rw product.img > /dev/null || abort
+    sudo mount -o loop system.img ./system || abort
+    sudo mount -o loop product.img ./product || abort
 elif [ "$ImageType" == "erofs" ]; then
     sudo mount -t erofs system.img ./system || abort
     sudo mount -t erofs product.img ./product || abort
