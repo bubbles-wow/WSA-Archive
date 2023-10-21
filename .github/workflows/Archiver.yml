@@ -179,6 +179,8 @@ jobs:
             cat ./download/INFO.md >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
             echo "update=true" >> $GITHUB_OUTPUT
+          else
+            echo "update=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Update Image Info 🤌
