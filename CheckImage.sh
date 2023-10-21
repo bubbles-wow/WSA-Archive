@@ -14,7 +14,7 @@ fix_ext4_img() {
 }
 
 cd ./download
-FileName=$(find -name "*.Msixbundle" | head -n 1) || abort
+FileName=$(ls *.Msixbundle | head -n 1) || abort
 PackageVersion=$(echo $FileName | cut -d'_' -f2) || abort
 MainVersion=$(echo $PackageVersion | cut -d'.' -f1) || abort
 mv $FileName wsa.zip || abort
