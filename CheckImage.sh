@@ -16,7 +16,6 @@ fix_ext4_img() {
 cd ./download
 FileName=$(ls *.Msixbundle | head -n 1) || abort
 PackageVersion=$(echo $FileName | cut -d'_' -f2) || abort
-MainVersion=$(echo $PackageVersion | cut -d'.' -f1) || abort
 mv $FileName wsa.zip || abort
 echo "Found package: $FileName"
 echo ""
@@ -29,7 +28,7 @@ echo "Extract done!"
 echo ""
 
 echo "Extract image and kernel..."
-if [ "$MainVersion" -ge "2302" ]; then
+if [ "$PackageVersion" \> "2302" ]; then
     unzip wsa.zip system.vhdx product.vhdx > /dev/null || abort
 else
     unzip wsa.zip system.img product.img > /dev/null || abort
@@ -40,7 +39,7 @@ rm -rf wsa.zip ./Tools || abort
 echo "Extract done!"
 echo ""
 
-if [ "$MainVersion" -ge "2302" ]; then
+if [ "$PackageVersion" \> "2302" ]; then
     echo "Convert vhdx to img..."
     qemu-img convert -q -f vhdx -O raw system.vhdx system.img || abort
     qemu-img convert -q -f vhdx -O raw product.vhdx product.img || abort
@@ -76,22 +75,25 @@ AndroidVersion=$(echo "$BuildProp" | sed -n 's/^ro.build.version.release=//p')
 API=$(echo "$BuildProp" | sed -n 's/^ro.build.version.sdk=//p')
 SeculityPatch=$(echo "$BuildProp" | sed -n 's/^ro.build.version.security_patch=//p')
 BuildID=$(echo "$BuildProp" | sed -n 's/^ro.build.id=//p')
-
-KernelInfo=$(file kernel | awk -F ', ' '{print $2}' | sed 's/version //; s/(\(.*\)) //') || abort
-KernelMain=$(echo $KernelInfo | cut -d'-' -f1)
-
-WebViewVersion=$(sudo aapt dump badging ./product/app/webview/webview.apk | grep -oP "versionName='\K[^']+") || abort
-
+AndroidInfoURL="https://developer.android.google.cn/about/versions/$AndroidVersion"
 if [ "$API" == "32" ]; then
     AndroidVersion="12L"
     AndroidInfoURL="https://developer.android.google.cn/about/versions/12/12L"
-else
-    AndroidInfoURL="https://developer.android.google.cn/about/versions/$AndroidVersion"
 fi
+
+KernelInfo=$(file kernel | awk -F ', ' '{print $2}' | sed 's/version //; s/(\(.*\)) //') || abort
+KernelMain=$(echo $KernelInfo | cut -d'-' -f1)
+KernelHead="latte"
+if [ "$KernelMain" \> "5.15" ]; then
+    KernelHead="latte-2"
+fi
+
+WebViewVersion=$(sudo aapt dump badging ./product/app/webview/webview.apk | grep -oP "versionName='\K[^']+") || abort
 
 SecPatchURL="https://source.android.com/security/bulletin/${SeculityPatch:0:9}1" || abort
 SecPatchHead=$(curl -s -L $SecPatchURL | grep -oP '<title>\K[^<]+' | sed 's/&nbsp;//g') || abort
 SecPatchDate=$(echo $SecPatchHead | grep -oP '\b[A-Z][a-z]+ \d{4}\b') || abort
+
 
 echo "PackageVersion: $PackageVersion"
 echo "AndroidVersion: $AndroidVersion"
@@ -103,22 +105,25 @@ echo "WebViewVersion: $WebViewVersion"
 
 Description="
 ## Details
-  - [Android $AndroidVersion]($AndroidInfoURL) | API $API
-  - Seculity patch
-    \`\`\`
-    $SeculityPatch
-    \`\`\`
-    Note: [Android Security Bulletin—**$SecPatchDate** | Android Open Source Project]($SecPatchURL)
-  - Kernel Version
-    \`\`\`
-    $KernelInfo
-    \`\`\`
-    Source: [latte-2/**$KernelMain**](https://github.com/microsoft/WSA-Linux-Kernel/)
-  - Build ID: 
-    \`\`\`
-    $BuildID
-    \`\`\`
-  - Chromium WebView Version: \`$WebViewVersion\`"
+- [Android $AndroidVersion]($AndroidInfoURL) | API $API
+- Seculity Patch
+  \`\`\`
+  $SeculityPatch
+  \`\`\`
+  Note: [Android Security Bulletin—**$SecPatchDate** | Android Open Source Project]($SecPatchURL)
+- Kernel Version
+  \`\`\`
+  $KernelInfo
+  \`\`\`
+  Source: [$KernelHead/**$KernelMain**](https://github.com/microsoft/WSA-Linux-Kernel/)
+- Build ID
+  \`\`\`
+  $BuildID
+  \`\`\`
+- Chromium WebView Version
+  \`\`\`
+  $WebViewVersion
+  \`\`\`"
 
 touch INFO.md || abort
 sudo echo "$Description" > INFO.md || abort
