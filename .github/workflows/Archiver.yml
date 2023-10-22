@@ -174,9 +174,9 @@ jobs:
             | jq -r '.body')
           if [[ $body == *"## Details"* ]]; then
             echo "update=false" >> $GITHUB_OUTPUT
-          elif [ -e ./download/INFO.md ]; then
+          elif [ -e ./download/${{ steps.download.outputs.Version }}.md ]; then
             echo "INFO<<EOF" >> $GITHUB_OUTPUT
-            cat ./download/INFO.md >> $GITHUB_OUTPUT
+            cat ./download/${{ steps.download.outputs.Version }}.md >> $GITHUB_OUTPUT
             echo "EOF" >> $GITHUB_OUTPUT
             echo "update=true" >> $GITHUB_OUTPUT
           else
