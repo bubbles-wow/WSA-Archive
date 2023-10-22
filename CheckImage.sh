@@ -119,26 +119,26 @@ while [ -n "$(find . -name "*.Msixbundle" | head -n 1)" ]; do
 ## Details
 - [Android $AndroidVersion]($AndroidInfoURL) | API $API
 - Seculity Patch
-\`\`\`
-$SeculityPatch
-\`\`\`
+  \`\`\`
+  $SeculityPatch
+  \`\`\`
 Note: [Android Security Bulletin—**$SecPatchDate** | Android Open Source Project]($SecPatchURL)
 - Kernel Version
-\`\`\`
-$KernelInfo
-\`\`\`
+  \`\`\`
+  $KernelInfo
+  \`\`\`
 Source: [$KernelHead/**$KernelMain**](https://github.com/microsoft/WSA-Linux-Kernel/)
 - Build ID
-\`\`\`
-$BuildID
-\`\`\`
+  \`\`\`
+  $BuildID
+  \`\`\`
 - Chromium WebView Version
-\`\`\`
-$WebViewVersion
-\`\`\`"
+  \`\`\`
+  $WebViewVersion
+  \`\`\`"
     
     touch "$PackageVersion.md" || abort
-    echo "$Description" | sudo tee "$PackageVersion.md" || abort
+    sudo echo "$Description" | sudo tee "$PackageVersion.md" > /dev/null || abort
     echo ""
     
     echo "Unmount image..."
