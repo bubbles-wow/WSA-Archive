@@ -13,12 +13,12 @@ fix_ext4_img() {
     return 0
 }
 
-cd ./download
-if [ "$(find -name "*.Msixbundle" | wc -l)" == "0" ]; then
+cd ./download || abort
+if [ "$(find . -name "*.Msixbundle" | wc -l)" == "0" ]; then
     abort "No package found!"
 fi
-while [ -n "$(find -name "*.Msixbundle" | head -n 1)" ]; do
-    FileName=$(ls *.Msixbundle | head -n 1) || abort
+while [ -n "$(find . -name "*.Msixbundle" | head -n 1)" ]; do
+    FileName=$(find . -name "*.Msixbundle" | head -n 1 | xargs -I {} basename {}) || abort
     PackageVersion=$(unzip -l "$FileName" | grep "WsaPackage_\([0-9]\+\.\)\{3\}[0-9]\+_x64_Release-Nightly.msix" | cut -d'_' -f2) || abort
     if [ -z "$PackageVersion" ]; then
         echo "Bad package! Remove this..."
@@ -26,7 +26,7 @@ while [ -n "$(find -name "*.Msixbundle" | head -n 1)" ]; do
         rm -rf "$FileName" || abort
         continue
     fi
-    mv $FileName wsa.zip || abort
+    mv "$FileName" wsa.zip || abort
     echo "Found package: $FileName"
     echo ""
     
@@ -38,6 +38,7 @@ while [ -n "$(find -name "*.Msixbundle" | head -n 1)" ]; do
     echo ""
     
     echo "Extract image and kernel..."
+    # shellcheck disable=SC2071
     if [ "$PackageVersion" \> "2302" ]; then
         unzip wsa.zip system.vhdx product.vhdx > /dev/null || abort
     else
@@ -49,6 +50,7 @@ while [ -n "$(find -name "*.Msixbundle" | head -n 1)" ]; do
     echo "Extract done!"
     echo ""
     
+    # shellcheck disable=SC2071
     if [ "$PackageVersion" \> "2302" ]; then
         echo "Convert vhdx to img..."
         qemu-img convert -q -f vhdx -O raw system.vhdx system.img || abort
@@ -92,8 +94,9 @@ while [ -n "$(find -name "*.Msixbundle" | head -n 1)" ]; do
     fi
     
     KernelInfo=$(file kernel | awk -F ', ' '{print $2}' | sed 's/version //; s/(\(.*\)) //') || abort
-    KernelMain=$(echo $KernelInfo | cut -d'-' -f1)
+    KernelMain=$(echo "$KernelInfo" | cut -d'-' -f1)
     KernelHead="latte"
+    # shellcheck disable=SC2072
     if [ "$KernelMain" \> "5.15" ]; then
         KernelHead="latte-2"
     fi
@@ -101,8 +104,8 @@ while [ -n "$(find -name "*.Msixbundle" | head -n 1)" ]; do
     WebViewVersion=$(sudo aapt dump badging ./product/app/webview/webview.apk | grep -oP "versionName='\K[^']+") || abort
     
     SecPatchURL="https://source.android.com/docs/security/bulletin/${SeculityPatch:0:9}1" || abort
-    SecPatchHead=$(curl -s -L $SecPatchURL | grep -oP '<title>\K[^<]+' | sed 's/&nbsp;//g') || abort
-    SecPatchDate=$(echo $SecPatchHead | grep -oP '\b[A-Z][a-z]+ \d{4}\b') || abort
+    SecPatchHead=$(curl -s -L "$SecPatchURL" | grep -oP '<title>\K[^<]+' | sed 's/&nbsp;//g') || abort
+    SecPatchDate=$(echo "$SecPatchHead" | grep -oP '\b[A-Z][a-z]+ \d{4}\b') || abort
     
     echo "PackageVersion: $PackageVersion"
     echo "AndroidVersion: $AndroidVersion"
@@ -135,7 +138,7 @@ $WebViewVersion
 \`\`\`"
     
     touch "$PackageVersion.md" || abort
-    sudo echo "$Description" >>"$PackageVersion.md" || abort
+    echo "$Description" | sudo tee "$PackageVersion.md" || abort
     echo ""
     
     echo "Unmount image..."
