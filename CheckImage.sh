@@ -90,7 +90,7 @@ fi
 
 WebViewVersion=$(sudo aapt dump badging ./product/app/webview/webview.apk | grep -oP "versionName='\K[^']+") || abort
 
-SecPatchURL="https://source.android.com/security/bulletin/${SeculityPatch:0:9}1" || abort
+SecPatchURL="https://source.android.com/docs/security/bulletin/${SeculityPatch:0:9}1" || abort
 SecPatchHead=$(curl -s -L $SecPatchURL | grep -oP '<title>\K[^<]+' | sed 's/&nbsp;//g') || abort
 SecPatchDate=$(echo $SecPatchHead | grep -oP '\b[A-Z][a-z]+ \d{4}\b') || abort
 
