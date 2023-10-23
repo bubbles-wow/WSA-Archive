@@ -1,4 +1,4 @@
-name: Auto Build
+name: Push Auto Build Task
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  trigger:
+  Push:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -18,8 +18,8 @@ jobs:
       id: get
       run: |
         cd ${{ github.workspace }}
-        version=$(head -n 1 UpdateInfo.cfg | sed 's/[[:space:]]*$//')
-        echo "$version" >> $GITHUB_OUTPUT
+        version=$(head -n 1 UpdateInfo.cfg | sed -n 's/^Version=//p')
+        echo "Version=$version" >> $GITHUB_OUTPUT
 
     - name: Check if need build
       id: check_release
@@ -43,20 +43,20 @@ jobs:
           echo "arm64_build_need=true" >> $GITHUB_OUTPUT
         fi
 
-    - name: Auto Build x64 in bubbles-wow/WSA-Modified
-      if: steps.check_release.outputs.x64_build_need == 'true'
-      run: |
-        curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: Bearer ${{ secrets.PAT }}" \
-          "https://api.github.com/repos/bubbles-wow/WSA-Modified/actions/workflows/auto_build_x64.yml/dispatches" \
-          -d '{"ref": "main"}'
-
     - name: Auto Build arm64 in bubbles-wow/WSA-Modified
       if: steps.check_release.outputs.arm64_build_need == 'true'
       run: |
         curl -X POST \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
-          "https://api.github.com/repos/bubbles-wow/WSA-Modified/actions/workflows/auto_build_arm64.yml/dispatches" \
-          -d '{"ref": "main"}'
+          "https://api.github.com/repos/bubbles-wow/WSA-Modified/actions/workflows/build_all_arm64.yml/dispatches" \
+          -d '{"ref": "main", "version": "${{ steps.get.outputs.Version }}"}'
+
+    - name: Auto Build x64 in bubbles-wow/WSA-Modified
+      if: steps.check_release.outputs.x64_build_need == 'true'
+      run: |
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: Bearer ${{ secrets.PAT }}" \
+          "https://api.github.com/repos/bubbles-wow/WSA-Modified/actions/workflows/build_all_x64.yml/dispatches" \
+          -d '{"ref": "main", "version": "${{ steps.get.outputs.Version }}"}'
