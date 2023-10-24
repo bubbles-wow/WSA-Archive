@@ -90,14 +90,6 @@ jobs:
             fi
           fi
 
-      - name: Upload result 📤
-        id: result
-        if: steps.check_release.outputs.release_exists == 'false'
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{ steps.download.outputs.Filename }}
-          path: ${{ github.workspace }}/download/${{ steps.download.outputs.Filename }}
-          
       - name: File Checksum ✔️
         id: hash
         if: steps.check_release.outputs.release_exists == 'false'
@@ -123,7 +115,7 @@ jobs:
           body: |
             ## File name
             ```
-            ${{ github.workspace }}/download/${{ steps.download.outputs.Filename }}
+            ${{ steps.download.outputs.Filename }}
             ```
             
             ## Hashes
@@ -149,7 +141,7 @@ jobs:
           body: |
             ## File name
             ```
-            ${{ github.workspace }}/download/${{ steps.download.outputs.Filename }}
+            ${{ steps.download.outputs.Filename }}
             ```
             
             ## Hashes
@@ -189,6 +181,5 @@ jobs:
         with:
           append_body: true
           tag_name: ${{ steps.download.outputs.Version }}
-          body: |
-            ${{ steps.info.outputs.INFO }}
+          body: ${{ steps.info.outputs.INFO }}
           token: ${{ secrets.PAT }}
