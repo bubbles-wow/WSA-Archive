@@ -50,7 +50,7 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
           "https://api.github.com/repos/bubbles-wow/WSA-Modified/actions/workflows/build_all_arm64.yml/dispatches" \
-          -d '{"ref": "main", "version": "${{ steps.get.outputs.Version }}"}'
+          -d '{"ref": "main", "inputs": {"version": "${{ steps.get.outputs.Version }}"}}'
 
     - name: Auto Build x64 in bubbles-wow/WSA-Modified
       if: steps.check_release.outputs.x64_build_need == 'true'
@@ -59,4 +59,4 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
           "https://api.github.com/repos/bubbles-wow/WSA-Modified/actions/workflows/build_all_x64.yml/dispatches" \
-          -d '{"ref": "main", "version": "${{ steps.get.outputs.Version }}"}'
+          -d '{"ref": "main", "inputs": {"version": "${{ steps.get.outputs.Version }}"}}'
