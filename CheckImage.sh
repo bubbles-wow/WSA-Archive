@@ -115,19 +115,18 @@ while [ -n "$(find . -name "*.Msixbundle" | head -n 1)" ]; do
     echo "BuildID: $BuildID"
     echo "WebViewVersion: $WebViewVersion"
     
-    Description="
-## Details
+    Description="## Details
 - [Android $AndroidVersion]($AndroidInfoURL) | API $API
 - Seculity Patch
   \`\`\`
   $SeculityPatch
   \`\`\`
-Note: [Android Security Bulletin—**$SecPatchDate** | Android Open Source Project]($SecPatchURL)
+  Note: [Android Security Bulletin—**$SecPatchDate** | Android Open Source Project]($SecPatchURL)
 - Kernel Version
   \`\`\`
   $KernelInfo
   \`\`\`
-Source: [$KernelHead/**$KernelMain**](https://github.com/microsoft/WSA-Linux-Kernel/)
+  Source: [$KernelHead/**$KernelMain**](https://github.com/microsoft/WSA-Linux-Kernel/)
 - Build ID
   \`\`\`
   $BuildID
